@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+    : Single Entry
+{% endblock %}
+
+{% block content_bigcol %}
+
+    {% if playlist %}
+	<p><b>Playlist for {{ playlist.play_date|date:"M d, Y" }}:</b></p>
+        {{ playlist.song1 }}<br />
+        {{ playlist.song2 }}<br />
+        {{ playlist.song3 }}<br />
+        {{ playlist.song4 }}<br />
+        {{ playlist.song5 }}<br />
+	<br />
+
+        {% load comments %}
+
+        <div class="comment_form">
+            {% get_comment_form for playlist as form %}
+            <form action="{% comment_form_target %}" method="POST">
+            {{ form.comment }}
+            <p style="display: none;">{{ form.honeypot }}</p>
+            {{ form.content_type }}
+            {{ form.object_pk }}
+            {{ form.timestamp }}
+            {{ form.security_hash }}
+            <p><input type="submit" value="Leave a comment" id="id_submit" /></p>
+            </form>
+            <!-- render_comment_form for playlist -->
+        </div>
+
+            {% get_comment_list for playlist as cmt_list %}
+            {% for comment in cmt_list %}
+            <div class="comment">
+                <a href="/profile/{{ comment.user.username }}/">{{ comment.user.username }}</a><br /> 
+                {{ comment.submit_date|date:"M d Y" }}
+                {{ comment.comment|linebreaks }}
+            </div>
+            {% endfor %}
+
+    {% else %}
+        <div>No entries available.</div>
+    {% endif %}
+
+{% endblock %}
+
+{% block content_smallcol %}
+    {% include "archive_list.html" %}
+{% endblock %}
+

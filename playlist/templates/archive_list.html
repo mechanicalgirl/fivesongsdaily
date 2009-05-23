@@ -1,0 +1,22 @@
+    {% load comments %}
+
+    {% if all_playlists %}
+        <b>Here's what you missed yesterday, and the day before that, and the day before that ...</b><br />
+        {% for playlist in all_playlists %}
+            <div class="archive_list">
+		<p>
+		<a style="text-decoration: none; font-weight: bold;" href="/id/{{ playlist.id }}">Playlist for {{ playlist.play_date|date:"M d, Y" }}</a>
+		<a style="text-decoration: none; font-style: italic;" href="/id/{{ playlist.id }}">{% get_comment_count for playlist as comment_count %} ({{ comment_count }} comments)</a><br />
+		{{ playlist.song1 }}<br />
+                {{ playlist.song2 }}<br />
+                {{ playlist.song3 }}<br />
+                {{ playlist.song4 }}<br />
+                {{ playlist.song5 }}<br />
+		</p>
+            </div>
+        {% endfor %}
+        <div class="more"><a href="/playlist/all/">all the rest &rsaquo</a></div>
+    {% else %}
+        No playlists yet.<br />
+    {% endif %}
+

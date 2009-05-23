@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block page_title %}Your Profile{% endblock %}
+{% block title %}Hello, {{ user.username }}{% endblock %}
+
+{% block content_bigcol %}
+
+{% if error_message %}
+
+    <div class="required">
+	Error: {{ error_message }}
+    </div>
+
+{% else %}
+
+    <p><b>Profile for: {{ profile.user.username }}</b></p>
+    <p><br /></p>
+    <p><label>Name</label>{{ profile.first_name }} {{ profile.last_name }}<br /></p>
+    <p><label>Email</label>{{ profile.user.email }}<br /></p>
+    <p><label>On Twitter</label>{{ profile.twitter }}<br /></p>
+    <p><label>On LiveJournal</label>{{ profile.livejournal }}<br /></p>
+    <p><label>Web Site</label>{{ profile.website }}<br /></p>
+    <p><label>Favorite Bands</label>{{ profile.favorite_bands }}<br /></p>
+    <p><br /></p>
+
+{% endif %}
+
+{% endblock %}

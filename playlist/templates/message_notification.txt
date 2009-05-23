@@ -1,0 +1,6 @@
+Date: {{ date }}
+
+Message: {{ message }}
+
+Approve or delete here:  http://{{ site }}/admin/entry/post/{{ post_id }}/
+

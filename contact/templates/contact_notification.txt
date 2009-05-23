@@ -1,0 +1,7 @@
+Date: {{ date }}
+
+Sender: {{ sender }}
+
+Message: {{ message }}
+
+

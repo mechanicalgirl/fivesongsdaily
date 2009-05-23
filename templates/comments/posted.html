@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block page_title %} : Thanks for commenting.{% endblock %}
+
+{% block content_bigcol %}
+
+    <h1>Thank you for your comment.</h1>
+
+    <a href="/id/{{ comment.object_pk }}/">Return to the original post</a>
+
+{% endblock %}
+

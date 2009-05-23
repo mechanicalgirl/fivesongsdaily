@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>
+	{% block title %}Five Songs Daily{% endblock %}
+	{% block page_title %}{% endblock %}
+    </title>
+    {% block page_css %}<link rel="stylesheet" type="text/css" href="/site_media/css/fivesongs.css">{% endblock %}
+    {% block page_js %}{% endblock %}
+</head>
+<body>
+
+<div align="center">
+<div class="homewrapper">
+
+<div id="top">
+    {% block header %}
+        {% include "header.html" %}
+    {% endblock %}
+</div>
+
+<table id="container">
+    <tr valign="top">
+    <td id="content_bigcol">
+	{% block content_bigcol %}
+	   <!-- figure this out later - how to layout the front pg doesn't really matter -->
+        {% endblock %}
+    </td>
+    <td id="content_smallcol">
+        {% block content_smallcol %}
+        {% endblock %}
+    </td>
+    </tr>
+</table>
+
+<div id="bottom">
+    {% block footer %}
+        {% include "footer.html" %}
+    {% endblock %}
+</div>
+
+</div>
+</div>
+
+</body>
+</html>
+

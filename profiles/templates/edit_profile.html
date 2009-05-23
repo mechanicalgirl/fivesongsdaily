@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block page_title %}Your Profile{% endblock %}
+{% block title %}Hello, {{ user.username }}{% endblock %}
+
+{% block content_bigcol %}
+
+{% if error_message %}
+
+    You've reached this page in error:<br />
+    {{ error_message }}
+
+{% else %}
+
+{% if form.errors %}
+    {% for field in form %}
+        {% if field.errors %}
+            <div class="form_error_field">
+                {{ field.label }}
+                {{ field.errors }}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<form enctype="multipart/form-data" action="." method="post">
+
+<p><label>Email Address:</label><input type="text" name="email" value="{{ form.email }}"><br /></p>
+<p>{{ form.first_name.label_tag }} {{ form.first_name.as_widget }}<br /></p>
+<p>{{ form.last_name.label_tag }} {{ form.last_name.as_widget }}<br /></p>
+<p>{{ form.city.label_tag }} {{ form.city.as_widget }}<br /></p>
+<p>{{ form.state.label_tag }} {{ form.state.as_widget }}<br /></p>
+<p>{{ form.zip_code.label_tag }} {{ form.zip_code.as_widget }}<br /></p>
+<p>{{ form.twitter.label_tag }} {{ form.twitter.as_widget }}<br /></p>
+<p>{{ form.livejournal.label_tag }} {{ form.livejournal.as_widget }}<br /></p>
+<p>{{ form.website.label_tag }} {{ form.website.as_widget }}<br /></p>
+<p>{{ form.favorite_bands.label_tag }} {{ form.favorite_bands.as_widget }}<br /></p>
+<p>{{ form.visible.label_tag }} {{ form.visible.as_widget }}<br /></p>
+<p>{{ form.email_notify.label_tag }} {{ form.email_notify.as_widget }}<br /></p>
+<p align="center"><input type="submit" value="Save Your Profile" /><br /></p>
+
+</form>
+
+<p style="margin-left: 25px; font-weight: bold;">
+        <a href="/password_reset/">Reset Your Password</a></p>
+
+{% endif %}
+
+{% endblock %}
+

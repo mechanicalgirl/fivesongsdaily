@@ -1,0 +1,95 @@
+    {% if playlist %}
+    
+	<div class="bigplaylist">
+
+        <p align="center"><b>Today's Playlist ({{ playlist.play_date|date:"M d Y" }}) : </b></p>
+
+        <table align="center">
+
+        <tr valign="top">
+            <td>{{ playlist.song1 }} {% if playlist.song1.album %}({{ playlist.song1.album }}){% endif %}</td>
+	    <td>
+                <object type="application/x-shockwave-flash" data="/site_media/flash/musicplayer.swf?&song_url={{ playlist.song1.filepath }}&" width="17" height="17">
+                <param name="movie" value="/site_media/flash/musicplayer.swf?&song_url={{ playlist.song1.filepath }}&" />
+                <img src="noflash.gif" width="17" height="17" alt="" />
+                </object>
+	    </td>
+	    <td><a href="{{ playlist.song1.filepath }}" title="right click to download">mp3</a></td>
+        </tr>
+
+        <tr valign="top">
+            <td>{{ playlist.song2 }} {% if playlist.song2.album %}({{ playlist.song2.album }}){% endif %}</td>
+            <td>
+                <object type="application/x-shockwave-flash" data="/site_media/flash/musicplayer.swf?&song_url={{ playlist.song2.filepath }}&" width="17" height="17">
+                <param name="movie" value="/site_media/flash/musicplayer.swf?&song_url={{ playlist.song2.filepath }}&" />
+                <img src="noflash.gif" width="17" height="17" alt="" />
+                </object>
+            </td>
+            <td><a href="{{ playlist.song2.filepath }}" title="right click to download">mp3</a></td>
+        </tr>
+
+        <tr valign="top">
+            <td>{{ playlist.song3 }} {% if playlist.song3.album %}({{ playlist.song3.album }}){% endif %}</td>
+            <td>
+                <object type="application/x-shockwave-flash" data="/site_media/flash/musicplayer.swf?&song_url={{ playlist.song3.filepath }}&" width="17" height="17">
+                <param name="movie" value="/site_media/flash/musicplayer.swf?&song_url={{ playlist.song3.filepath }}&" />
+                <img src="noflash.gif" width="17" height="17" alt="" />
+                </object>
+            </td>
+            <td><a href="{{ playlist.song3.filepath }}" title="right click to download">mp3</a></td>
+        </tr>
+
+        <tr valign="top">
+            <td>{{ playlist.song4 }} {% if playlist.song4.album %}({{ playlist.song4.album }}){% endif %}</td>
+            <td>
+                <object type="application/x-shockwave-flash" data="/site_media/flash/musicplayer.swf?&song_url={{ playlist.song4.filepath }}&" width="17" height="17">
+                <param name="movie" value="/site_media/flash/musicplayer.swf?&song_url={{ playlist.song4.filepath }}&" />
+                <img src="noflash.gif" width="17" height="17" alt="" />
+                </object>
+            </td>
+            <td><a href="{{ playlist.song4.filepath }}" title="right click to download">mp3</a></td>
+        </tr>
+
+        <tr valign="top">
+            <td>{{ playlist.song5 }} {% if playlist.song5.album %}({{ playlist.song5.album }}){% endif %}</td>
+            <td>
+                <object type="application/x-shockwave-flash" data="/site_media/flash/musicplayer.swf?&song_url={{ playlist.song5.filepath }}&" width="17" height="17">
+                <param name="movie" value="/site_media/flash/musicplayer.swf?&song_url={{ playlist.song5.filepath }}&" />
+                <img src="noflash.gif" width="17" height="17" alt="" />
+                </object>
+            </td>
+            <td><a href="{{ playlist.song5.filepath }}" title="right click to download">mp3</a></td>
+        </tr>
+
+        </table>
+	</div>
+
+        {% load comments %}
+
+        <div class="comment_form">
+            {% get_comment_form for playlist as form %}
+            <form action="{% comment_form_target %}" method="POST">
+            {{ form.comment }}
+            <p style="display: none;">{{ form.honeypot }}</p>
+            {{ form.content_type }}
+            {{ form.object_pk }}
+            {{ form.timestamp }}
+            {{ form.security_hash }}
+            <p><input type="submit" value="Leave a comment" id="id_submit" /></p>
+            </form>
+            <!-- render_comment_form for playlist -->
+        </div>
+
+            {% get_comment_list for playlist as cmt_list %}
+            {% for comment in cmt_list %}
+            <div class="comment">
+                <a href="/profile/{{ comment.user.username }}/">{{ comment.user.username }}</a><br /> 
+		{{ comment.submit_date|date:"M d Y" }}
+                {{ comment.comment|linebreaks }}
+	    </div>
+	    {% endfor %}
+
+    {% else %}
+        No playlist today.<br />
+    {% endif %}
+
