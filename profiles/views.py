@@ -11,8 +11,22 @@ from django import forms
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 
-from fivesongs.profiles.models import UserProfile
+from fivesongs.profiles.models import UserProfile, Avatar
 from fivesongs.profiles.forms import UserProfileForm
+
+@login_required
+def searchband(request, bandname):
+    """
+    """
+    template_name = 'search_results.html'
+    context ={}
+    try:
+	profiles = UserProfile.objects.filter(visible=True, active=True, favorite_bands__contains=bandname)
+    except ObjectDoesNotExist:
+	profiles = None
+    context['results'] = profiles
+    context['band'] = bandname
+    return render_to_response(template_name, context, context_instance=RequestContext(request))
 
 @login_required
 def view(request, username):
@@ -30,6 +44,8 @@ def view(request, username):
 	context['error_message'] = 'That user does not exist.'
         profile = None
 
+    logging.debug(profile)
+
     permission = has_permission(request.user, request.user.username, username)
     if permission is True:
 	logging.debug('**** OK - viewing your own profile')
@@ -43,6 +59,25 @@ def view(request, username):
         else:
 	    logging.debug('***** its not your profile, and the user has not made it visible to all')
 	    context['error_message'] = 'You do not have permission to view this profile.'
+
+    if profile:
+	try:
+	    avatar = Avatar.objects.get(user=requested_user.id)
+	except ObjectDoesNotExist:
+	    avatar = None
+	context['avatar'] = avatar
+
+	try:
+	    favorite_bands = profile.favorite_bands
+	except ObjectDoesNotExist:
+	    favorite_bands = None
+
+	if favorite_bands:
+	    bands = []
+	    band_list = favorite_bands.split (',')
+	    for band in band_list:
+		bands.append(band.strip())
+	    context['bands'] = bands	
 
     context['profile'] = profile
 

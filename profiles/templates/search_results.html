@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block page_title %}Search Results{% endblock %}
+
+{% block content_bigcol %}
+
+{% if results %}
+
+    <h3>Members who like {{ band }}:</h3>
+    <ul>
+    {% for result in results %}
+	<a href="/profile/{{ result.user.username }}/">{{ result.user.username }}</a><br />
+    {% endfor %}
+    </ul>
+
+{% else %}
+
+    <h3>No one else seems to like {{ band }} ...</h3>
+
+{% endif %}
+
+{% endblock %}

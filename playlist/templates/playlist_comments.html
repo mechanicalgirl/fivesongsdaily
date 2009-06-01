@@ -1,0 +1,51 @@
+
+        {% load comments %}
+
+        {% get_comment_form for playlist as form %}
+        <div id="comment_form">
+            <form action="{% comment_form_target %}" method="POST">
+            {{ form.comment }}
+            <p style="display: none;">{{ form.honeypot }}</p>
+            {{ form.content_type }}
+            {{ form.object_pk }}
+            {{ form.timestamp }}
+            {{ form.security_hash }}
+            <p><input type="submit" value="Leave a comment" id="id_submit" /></p>
+            </form>
+        </div>
+
+        {% get_comment_list for playlist as cmt_list %}
+        {% for comment in cmt_list %}
+        <div class="comment">
+            <a href="/profile/{{ comment.user.username }}/">{{ comment.user.username }}</a><br />
+            {{ comment.submit_date|date:"M d Y" }}
+            {{ comment.comment|linebreaks }}
+        </div>
+        {% endfor %}
+
+        <script type="text/javascript" charset="utf-8">
+        function bindPostCommentHandler() {
+            $('#comment_form form input.submit-preview').remove();
+            $('#comment_form form').submit(function() {
+                $.ajax({
+                    type: "POST",
+                    data: $('#comment_form form').serialize(),
+                    url: "{% comment_form_target %}",
+                    cache: false,
+                    dataType: "html",
+                    success: function(html, textStatus) {
+                        $('#comment_form form').replaceWith('Your comment was posted successfully.  Reload the page to see it.');
+                        bindPostCommentHandler();
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        $('#comment_form form').replaceWith('Your comment was unable to be posted at this time.  We apologise for the inconvenience.');
+                    }
+                });
+                return false;
+            });
+        }
+        $(document).ready(function() {
+            bindPostCommentHandler();
+        });
+        </script>
+

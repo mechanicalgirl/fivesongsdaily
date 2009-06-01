@@ -9,10 +9,11 @@ from django.contrib.auth.models import User
 class Song(models.Model):
     """
     """
+    user = models.ForeignKey(User, editable=True)
     artist = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
     album = models.CharField(max_length=255, blank=True)
-    filepath = models.CharField(max_length=255)
+    filepath = models.FileField('file upload', upload_to='mp3/', blank=True)
     active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -21,10 +22,12 @@ class Song(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+	unique_together = ("artist", "title",)
 
 class Playlist(models.Model):
     """
     """
+    user = models.ForeignKey(User, editable=True)
     play_date = models.DateField()
     song1 = models.ForeignKey(Song, related_name="song1")
     song2 = models.ForeignKey(Song, related_name="song2")

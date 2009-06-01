@@ -9,6 +9,7 @@ from fivesongs.profiles.data.choices import states, countries
 class UserProfileForm(ModelForm):
     state = forms.ChoiceField(label='State', widget=forms.Select(attrs={'class':'input_select'}), choices=states, required=False)
     country = forms.ChoiceField(label='Country', widget=forms.Select(attrs={'class':'input_select'}), choices=countries, required=False)
+    favorite_bands = forms.CharField(label='Favorite bands (comma-separated)', widget=forms.widgets.Textarea(), required=False)
 
     class Meta:
         model = UserProfile

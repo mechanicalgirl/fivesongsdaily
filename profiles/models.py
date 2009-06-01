@@ -1,8 +1,16 @@
+import datetime
+import os.path
+try:
+    from PIL import Image, ImageFilter
+except ImportError:
+    import Image, ImageFilter
+
 from django.db import models
 from django.http import Http404
 from django.template.loader import render_to_string
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
+from django.core.files.storage import default_storage
 
 class UserProfile(models.Model):
     """
@@ -35,5 +43,53 @@ class UserProfile(models.Model):
     class Meta:
         ordering = ['last_name']
 
+
+class Avatar(models.Model):
+    """
+    """
+    image = models.ImageField(upload_to="avatars/%Y/%b/%d", storage=default_storage)
+    user = models.ForeignKey(User)
+    date = models.DateTimeField(auto_now_add=True)
+    valid = models.BooleanField()
+
+    class Meta:
+        unique_together = (('user', 'valid'),)
+
+    def __unicode__(self):
+        return _("%s's Avatar") % self.user
+
+    def delete(self):
+        if hasattr(settings, "AWS_SECRET_ACCESS_KEY"):
+            path = urllib.unquote(self.image.name)
+        else:
+            path = self.image.path
+
+        base, filename = os.path.split(path)
+        name, extension = os.path.splitext(filename)
+        for key in AVATAR_SIZES:
+            try:
+                storage.delete(os.path.join(base, "%s.%s%s" % (name, key, extension)))
+            except:
+                pass
+
+        super(Avatar, self).delete()
+
+    def save(self):
+        for avatar in Avatar.objects.filter(user=self.user, valid=self.valid).exclude(id=self.id):
+            if hasattr(settings, "AWS_SECRET_ACCESS_KEY"):
+                path = urllib.unquote(self.image.name)
+            else:
+                path = avatar.image.path
+
+            base, filename = os.path.split(path)
+            name, extension = os.path.splitext(filename)
+            for key in AVATAR_SIZES:
+                try:
+                    storage.delete(os.path.join(base, "%s.%s%s" % (name, key, extension)))
+                except:
+                    pass
+            avatar.delete()
+
+        super(Avatar, self).save()
 
 

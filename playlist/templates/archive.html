@@ -6,6 +6,13 @@
 
 {% block content_bigcol %}
     {% include "archive_list.html" %}
+
+    <div class="pagination" align="center">
+	{% for page in page_range %}
+	    <a href="/playlist/all/?page={{ page }}">{{ page }}</a>
+	{% endfor %}
+    </div>
+    
 {% endblock %}
 
 

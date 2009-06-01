@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block page_title %}
+    : Add Your Own Playlist
+{% endblock %}
+
+{% block content_bigcol %}
+
+    <div class="page_title">{{ user.username }}'s playlists</div>
+
+    <table>
+    <tr valign="top">
+        <form enctype="multipart/form-data" action="/playlist/song/add/" method="post">
+        <td>{{ form_song.artist.label }} {{ form_song.artist }}</td>
+        <td>{{ form_song.title.label }} {{ form_song.title }}</td>
+        <td>{{ form_song.filepath.label }} {{ form_song.filepath }}</td>
+        <td><input type="submit" value="Add a song" /><br /></td>
+        </form>
+    </tr>
+    </table>
+    <div class="right" style="color: red;">
+        {% if form_song.non_field_errors %}<ul class="errorlist">{{ form_song.non_field_errors.as_ul }}</ul>{% endif %}
+        {% if form_song.field.errors %}<ul class="errorlist">{{ form_song.field.errors.as_ul }}</ul>{% endif %}
+    </div>
+    <div class="clear"></div>
+
+    <br /><br />
+    
+    {% if song_select %}
+    <!-- ({{ song_select|length }} songs available)<br /> -->
+    <form name="user_playlist" action="." method="post">
+	<label><b>Song 1:</b></label> <select name="song1" id="id_song1"><option value="" selected="selected">---------</option>
+	{% for song in song_select %}<option value="{{ song.id }}">{{ song }}</option>{% endfor %}
+	</select><br />
+
+        <label><b>Song 2:</b></label> <select name="song2" id="id_song2"><option value="" selected="selected">---------</option>
+        {% for song in song_select %}<option value="{{ song.id }}">{{ song }}</option>{% endfor %}
+        </select><br />
+
+        <label><b>Song 3:</b></label> <select name="song3" id="id_song3"><option value="" selected="selected">---------</option>
+        {% for song in song_select %}<option value="{{ song.id }}">{{ song }}</option>{% endfor %}
+        </select><br />
+
+        <label><b>Song 4:</b></label> <select name="song4" id="id_song4"><option value="" selected="selected">---------</option>
+        {% for song in song_select %}<option value="{{ song.id }}">{{ song }}</option>{% endfor %}
+        </select><br />
+
+        <label><b>Song 5:</b></label> <select name="song5" id="id_song5"><option value="" selected="selected">---------</option>
+        {% for song in song_select %}<option value="{{ song.id }}">{{ song }}</option>{% endfor %}
+        </select><br />
+
+	<input type="hidden" name="user" id="id_user" value="{{ user.id }}">
+	<input type="hidden" name="active" id="id_active" value="False">
+	<input type="hidden" name="play_date" id="id_play_date" value="1999-01-01">
+	<p align="center"><input type="submit" value="Save Your Playlist" /></p>
+    </form>
+    <div class="right" style="color: red;">
+	{% if form.non_field_errors %}<ul class="errorlist">{{ form.non_field_errors.as_ul }}</ul>{% endif %}
+	{% if form.field.errors %}<ul class="errorlist">{{ form.field.errors.as_ul }}</ul>{% endif %}
+    </div>
+    <div class="clear"></div>
+
+    {% endif %}
+
+    {% if user_queued_playlists %}
+	<br /><br />
+	<b>Your queued playlists:</b><br />
+	{% for playlist in user_queued_playlists %}
+	    <p><b>{{ playlist.play_date }}</b> | {{ playlist.song1 }} | {{ playlist.song2 }} | {{ playlist.song3 }} | {{ playlist.song4 }} | {{ playlist.song5 }}<br />
+	{% endfor %}
+    {% endif %}
+    {% if user_pending_playlists %}
+	<br /><br />
+        <b>Your playlists pending review:</b><br />
+        {% for playlist in user_pending_playlists %}
+            <p>{{ playlist.song1 }} | {{ playlist.song2 }} | {{ playlist.song3 }} | {{ playlist.song4 }} | {{ playlist.song5 }}<br />
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}
+
+{% block content_smallcol %}
+
+    <p>Bear with me - there are still some kinks to work out here, so if you come across any egregious errors, just email, DM, or send me a message through the <a href="/contact/">contact form</a>.</p>
+
+    <p>I don't have a progress bar for the file uploads yet, so if you add a song and it seems to be taking a while, please be nice to the server and don't mash the reload button over and over - just be patient, it'll get there.</p>
+
+    <p>When you start adding songs, dropdowns will appear below that will allow you to add them to a playlist.  You need to have at least five songs to create a playlist.</p>
+
+    <p>New playlists will be listed under "Your playlists pending review".  Once I give it a date, look for it under "Your queued playlists".</p>
+
+    <p>I'm open to suggestions on how this interface should work - this is just the best solution I've come up with so far. <a href="/contact/">Let me know</a> if you've got better ideas.</p>
+    
+{% endblock %}
+

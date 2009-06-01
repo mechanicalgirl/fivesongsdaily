@@ -1,6 +1,6 @@
-Date: {{ date }}
+New playlist uploaded by: {{ user }}
 
-Message: {{ message }}
+Approve or delete here:  http://{{ site }}/admin/playlist/playlist/?user__id__exact={{ user_id }}&active__exact=0
 
-Approve or delete here:  http://{{ site }}/admin/entry/post/{{ post_id }}/
+
 

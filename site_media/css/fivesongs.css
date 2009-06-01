@@ -25,6 +25,7 @@ h2, h3, h4 { font-size: 16px; }
 fieldset { padding: 0; margin-top: 5px;}
 textarea { height: 100px; width: 400px; background-color: #e1e1e1; }
 label { font-weight: bold; width: 200px; float: left; text-align: right; margin-right: 0.5em; display: block; }
+.input_short { width: 100px; font-size: 11px; margin: 0 5px 0 5px; }
 .error { color: red; text-align: right; width: 300px; }
 .loginlabel { font-weight: bold; width: 100px; float: left; text-align: right; margin-right: 0.5em; letter-spacing: .5px; display: block; }
 #id_message { height: 100px; width: 400px; background-color: #e1e1e1; }
@@ -47,7 +48,11 @@ label { font-weight: bold; width: 200px; float: left; text-align: right; margin-
 .archive_list { color: #003366; font-size: 11px; margin: 3px 0 3px 0; border-bottom: 1px dotted #CCC; padding: 0px; }
 .more a { font-weight: bold; text-decoration: none; float: right; clear: right; }
 .bigplaylist { font-size: 14px; margin: 5px 25px 25px 25px; padding: 5px; border: 0px solid green; }
-.bigplaylist td { padding: 8px; }
+.dll { float: left; width: 450px; text-align: right; }
+.dlr { float: left; width: 50px; }
+
+.comment_count { text-decoration: none; font-style: italic; }
+.playlist_date { text-decoration: none; font-weight: bold; }
 
 .loginbox { position: absolute; top: 50px; left: 200px; border: 1px solid #0066CC; background-color: #003366; padding: 20px; color: #fff; }
 .loginbox a { color: #fff; font-weight: bold; text-decoration: none; }

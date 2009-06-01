@@ -1,5 +1,6 @@
 import logging
-import datetime
+import time, datetime
+from datetime import timedelta
 from time import strftime
 
 from django.conf import settings
@@ -13,13 +14,12 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.loader import render_to_string
 
-from fivesongs.playlist.models import Playlist, Comment
-from fivesongs.playlist.forms import CommentForm
+from fivesongs.playlist.models import Song, Playlist
+from fivesongs.playlist.forms import SongForm, PlaylistForm
+from fivesongs.profiles.models import Avatar
 
 @login_required
 def show_home(request):
-    """
-    """
     template_name = 'home.html'
     context = {}
 
@@ -60,24 +60,32 @@ def show_all(request):
     limit = offset + per_page
     all_playlists = all_playlists[offset:limit]
     context['all_playlists'] = all_playlists
+    context['today'] = todaysdate
 
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 
 @login_required
-def show_id(request, id, form=CommentForm):
+def show_id(request, id):
     """
     """
     template_name = 'single.html'
     context = {}
 
-    todaysdate = datetime.datetime.now().strftime("%Y-%m-%d")
+    todaysdate = datetime.date.today()
     try:
         playlist = Playlist.objects.get(pk=id, active=True, play_date__lt=todaysdate)
+        last_week = todaysdate - datetime.timedelta(days=7)
+        if playlist.play_date < last_week:
+	    playlist.song1.filepath = None
+	    playlist.song2.filepath = None
+	    playlist.song3.filepath = None
+	    playlist.song4.filepath = None
+	    playlist.song5.filepath = None
     except ObjectDoesNotExist:
         playlist = None
         return HttpResponseRedirect('/')
-
-    if str(playlist.play_date) == str(datetime.datetime.now().strftime("%Y-%m-%d")):
+    
+    if playlist.play_date == todaysdate:
 	template_name = 'home.html'
 
     try:
@@ -97,22 +105,73 @@ def show_id(request, id, form=CommentForm):
         else:
             form = form()
 
+    context['today'] = todaysdate
     context['playlist'] = playlist
     context['all_playlists'] = all_playlists
-    context['comment_list'] = comments(request, id)
-    context['commentform'] = form
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 
 @login_required
-def comments(request, entry_id):
-    """
-    """
-    if entry_id:
-        try:
-            comment_list = Comment.objects.filter(post=entry_id, publish=True).order_by('created_at')
-            for comment in comment_list:
-                comment.body = str(comment.body)
-        except ObjectDoesNotExist:
-            comment_list = None
-    return comment_list
+def user_song_upload(request):
+    template_name = 'song_add.html'
+    context = {}
+    form_class = SongForm
+    if request.method == 'POST':
+        form = form_class(request.POST, request.FILES)
+        if form.is_valid():
+            song = form.save(commit=False)
+            song.active = True
+            song.user = request.user
+            song.save()
+    return HttpResponseRedirect('/playlist/upload/')
+
+@login_required
+def user_playlist(request):
+    template_name = 'playlist_save.html'
+    context = {}
+    form_class = PlaylistForm
+
+    try:
+        user_songs = Song.objects.filter(user=request.user)
+    except ObjectDoesNotExist:
+        user_songs = None
+    context['song_select'] = user_songs
+
+    try:
+        user_pending_playlists = Playlist.objects.filter(user=request.user, active=False).order_by('-created_at')
+    except ObjectDoesNotExist:
+        user_pending_playlists = None
+    context['user_pending_playlists'] = user_pending_playlists
+
+    try:
+        user_queued_playlists = Playlist.objects.filter(user=request.user, active=True).order_by('-created_at')
+    except ObjectDoesNotExist:
+        user_queued_playlists = None
+    context['user_queued_playlists'] = user_queued_playlists
+
+    if request.method == 'POST':
+        form = form_class(request.POST)
+        if form.is_valid():
+            playlist = form.save(commit=False)
+            playlist.active = False
+            playlist.user = request.user
+            playlist.save()
+
+            # notify admin of new list
+            from django.core.mail import send_mail
+            email_dict = {'user': request.user, 'user_id': request.user.id}
+            email_dict['site'] = Site.objects.get_current()
+            subject = "New playlist uploaded by " + request.user.username
+            body = render_to_string('message_notification.txt', email_dict)
+            sent = send_mail(subject, body, settings.ADMIN_EMAIL, [settings.ADMIN_EMAIL])
+            logging.debug('SENT: %s' %sent)
+
+        else:
+            logging.debug('*************** not valid %s', form.errors)
+    else:
+        form = form_class()
+
+    context['form'] = form
+    context['form_song'] = SongForm()
+
+    return render_to_response(template_name, context, context_instance=RequestContext(request))
 

@@ -6,9 +6,9 @@ from django.contrib.syndication.feeds import Feed
 from fivesongs.playlist.models import Playlist
 
 class LatestPlaylists(Feed):
-    title = "Five Songs Daily"
-    link = "http://www.fivesongsdaily.com/"
-    description = "Latest playlists on Five Songs Daily"
+    title = ""
+    link = ""
+    description = ""
 
     def items(self):
         todaysdate = datetime.datetime.now().strftime("%Y-%m-%d")

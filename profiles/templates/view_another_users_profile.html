@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block page_title %}Your Profile{% endblock %}
-{% block title %}Hello, {{ user.username }}{% endblock %}
 
 {% block content_bigcol %}
 
@@ -20,7 +19,16 @@
     <p><label>On Twitter</label>{{ profile.twitter }}<br /></p>
     <p><label>On LiveJournal</label>{{ profile.livejournal }}<br /></p>
     <p><label>Web Site</label>{{ profile.website }}<br /></p>
-    <p><label>Favorite Bands</label>{{ profile.favorite_bands }}<br /></p>
+    <p><label>Favorite Bands</label>
+        {% if bands %}
+	    <div style="position: relative; float: left; width: 400px;">
+            {% for band in bands %}
+                <a href="/profile/band/{{ band }}/">{{ band }}</a>
+            {% endfor %}
+	    </div>
+            <div class="clear"></div>
+        {% endif %}
+    </p>
     <p><br /></p>
 
 {% endif %}

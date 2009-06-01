@@ -4,41 +4,41 @@
     : Single Entry
 {% endblock %}
 
+{% block page_js %}
+    <script language="javascript" src="/site_media/js/jquery-1.3.2.js"></script>
+{% endblock %}
+
 {% block content_bigcol %}
 
     {% if playlist %}
+
+	<div align="center"><div style="text-align: left; margin-bottom: 20px; width: 450px;">
+
 	<p><b>Playlist for {{ playlist.play_date|date:"M d, Y" }}:</b></p>
+
+        <div style="float: left">
         {{ playlist.song1 }}<br />
         {{ playlist.song2 }}<br />
         {{ playlist.song3 }}<br />
         {{ playlist.song4 }}<br />
         {{ playlist.song5 }}<br />
-	<br />
+	</div>
 
-        {% load comments %}
-
-        <div class="comment_form">
-            {% get_comment_form for playlist as form %}
-            <form action="{% comment_form_target %}" method="POST">
-            {{ form.comment }}
-            <p style="display: none;">{{ form.honeypot }}</p>
-            {{ form.content_type }}
-            {{ form.object_pk }}
-            {{ form.timestamp }}
-            {{ form.security_hash }}
-            <p><input type="submit" value="Leave a comment" id="id_submit" /></p>
-            </form>
-            <!-- render_comment_form for playlist -->
+	{% if playlist.song1.filepath %}
+        <div style="float: left; margin-left: 50px; width: 50px;">
+            <a href="/site_media/{{ playlist.song1.filepath }}" title="right click to download">mp3</a><br />
+            <a href="/site_media/{{ playlist.song2.filepath }}" title="right click to download">mp3</a><br />
+            <a href="/site_media/{{ playlist.song3.filepath }}" title="right click to download">mp3</a><br />
+            <a href="/site_media/{{ playlist.song4.filepath }}" title="right click to download">mp3</a><br />
+            <a href="/site_media/{{ playlist.song5.filepath }}" title="right click to download">mp3</a><br />
         </div>
+	{% endif %}
 
-            {% get_comment_list for playlist as cmt_list %}
-            {% for comment in cmt_list %}
-            <div class="comment">
-                <a href="/profile/{{ comment.user.username }}/">{{ comment.user.username }}</a><br /> 
-                {{ comment.submit_date|date:"M d Y" }}
-                {{ comment.comment|linebreaks }}
-            </div>
-            {% endfor %}
+        <div class="clear"></div>
+
+	</div></div>
+
+	{% include "playlist_comments.html" %}
 
     {% else %}
         <div>No entries available.</div>
