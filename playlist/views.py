@@ -111,21 +111,44 @@ def show_id(request, id):
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 
 @login_required
+def preview_id(request, id):
+    template_name = 'preview.html'
+    context = {}
+
+    if request.user.is_superuser:
+        try:
+	    playlist = Playlist.objects.get(pk=id, active=True)
+	except ObjectDoesNotExist:
+	    playlist = None
+	    return HttpResponseRedirect('/')
+    else:
+        playlist = None
+        return HttpResponseRedirect('/')
+
+    context['playlist'] = playlist
+    return render_to_response(template_name, context, context_instance=RequestContext(request))
+
+@login_required
 def user_song_upload(request):
     template_name = 'song_add.html'
     context = {}
     form_class = SongForm
     if request.method == 'POST':
         form = form_class(request.POST, request.FILES)
-        if form.is_valid():
+	logging.debug('******* file size ***********')
+	logging.debug(request.FILES['filepath'].size)
+	if request.FILES['filepath'].size < 5457045 and form.is_valid():
             song = form.save(commit=False)
             song.active = True
             song.user = request.user
             song.save()
-    return HttpResponseRedirect('/playlist/upload/')
+	    return HttpResponseRedirect('/playlist/upload/success/')
+	else:
+	    logging.debug('********* file too large ***************')
+	    return HttpResponseRedirect('/playlist/upload/error/')
 
 @login_required
-def user_playlist(request):
+def user_playlist(request, message):
     template_name = 'playlist_save.html'
     context = {}
     form_class = PlaylistForm
@@ -172,6 +195,13 @@ def user_playlist(request):
 
     context['form'] = form
     context['form_song'] = SongForm()
+
+    if message == 'error': 
+	context['upload_message'] = 'Sorry, that file was too large.'
+    if message == 'success': 
+	context['upload_message'] = 'Your file was uploaded successfully.'
+    logging.debug('*************** message **************')
+    logging.debug(message)
 
     return render_to_response(template_name, context, context_instance=RequestContext(request))
 
