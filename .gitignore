@@ -1,0 +1,6 @@
+NOTES.txt
+*.bak
+venv
+*.swp
+
+**/__pycache__/

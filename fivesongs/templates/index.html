@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div>
+
+    {% if songs %}
+
+          {% for song in songs %}
+            <p>
+              <div class="dll">{{ song.title }} - {{ song.artist }}</div>
+              <div class="dlr">
+                <audio controls>
+                  <source src="/static/music/{{ song.filepath }}" type="audio/mp3">
+                </audio>
+              </div>
+              <div style="clear: both;"></div>
+            </p>
+          {% endfor %}
+
+          <div class="playlist_date">{{ play_date.play_date }}</div>
+
+    {% else %}
+      No songs available.<br />
+    {% endif %}
+
+  </div>
+
+{% endblock %}

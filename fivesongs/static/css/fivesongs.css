@@ -1,0 +1,30 @@
+body {
+    background: #FEC601 url('/static/images/bg_main.jpg')  no-repeat scroll 50% 0px;
+}
+
+#ft {
+    height:133px;
+    background: url('/static/images/bg_footer.gif') repeat-x;
+}
+
+.player_background { 
+  background: url('/static/images/lgo_main.png') no-repeat scroll 50% 0px;
+  font-size: 14px;
+  margin: 5px 25px 25px 25px;
+  padding: 5px;
+  border: 0px solid green;
+  width: 460px;
+  height: 318px;
+}
+.dll { float: left; margin-right: 5px; width: 400px; text-align: right; }
+.dlr { float: left; width: 50px; }
+
+.playlist_date { text-decoration: none; font-weight: bold; }
+
+.page { padding: 10px; }
+.page_title { text-align: right; margin: 5px; padding: 5px; font-size: 18px; font-weight: bold; }
+.page_content { text-align: left; }
+.page_footer { float: right; }
+
+#bottom{ width: 1000px; }
+.footerlink, .footerlink a { float: left; margin: 5px; color: #999; text-decoration: none; }

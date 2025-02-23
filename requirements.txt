@@ -1,0 +1,7 @@
+click==8.1.8
+Flask==3.0.3
+Flask-Admin==1.6.1
+Flask-SQLAlchemy==3.1.1
+gunicorn==22.0.0
+SQLAlchemy==2.0.38
+Werkzeug==3.1.3
