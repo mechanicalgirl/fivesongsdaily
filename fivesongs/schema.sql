@@ -21,5 +21,8 @@ CREATE TABLE song (
     filepath TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     playlist_id INTEGER,
-    FOREIGN KEY(playlist_id) REFERENCES playlist(id)
+    FOREIGN KEY(playlist_id) REFERENCES playlist(id),
+    duration TEXT,
+    album_name TEXT,
+    album_art TEXT
 );
