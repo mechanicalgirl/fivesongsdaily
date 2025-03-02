@@ -6,40 +6,39 @@
   <title>Five Songs Daily</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/amplitude.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/fivesongs.css') }}">
 
   <script src="{{ url_for('static', filename='js/modernizr.custom.32229-2.8-respondjs-1-4-2.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/amplitude.min.js') }}"></script>
 </head>
 <body>
 
+<!-- 
 <nav>
-  <h1>Placeholder nav</h1>
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>
       <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
     {% else %}
+      # display the logo if the user is not logged in
       <li><a href="{{ url_for('auth.register') }}">Register</a>
       <li><a href="{{ url_for('auth.login') }}">Log In</a>
     {% endif %}
   </ul>
 </nav>
+-->
 
 <div class="container">
   <header>
     {% block header %}{% endblock %}
   </header>
 
-  {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-  {% endfor %}
-
   {% block content %}{% endblock %}
 
 </div> <!-- end container -->
 
 <!-- footer -->
-<div class="player_background"></div>
 <!-- end footer -->
 
 </body>

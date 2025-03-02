@@ -1,0 +1,17 @@
+[project]
+name = "fivesongs"
+version = "1.0.0"
+description = "Daily five song playlist"
+dependencies = [
+    "click==8.1.8",
+    "Flask==3.0.3",
+    "Flask-Admin==1.6.1",
+    "Flask-SQLAlchemy==3.1.1",
+    "gunicorn==22.0.0",
+    "SQLAlchemy==2.0.38",
+    "Werkzeug==3.1.3"
+]
+
+[build-system]
+requires = ["flit_core<4"]
+build-backend = "flit_core.buildapi"
