@@ -1,0 +1,61 @@
+{% extends 'adminbase.html' %}
+
+{% block content %}
+
+  {% if song %}
+
+    <a href="/admin/song/edit/{{ song.id }}">Edit this song</a><br />
+    <table class="table">
+      <tbody>
+        <tr>
+          <th scope="row">Song Title</th>
+          <td>{{ song.title }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Artist Name</th>
+          <td>{{ song.artist }}</td>
+        </tr>
+        <tr>
+          <th scope="row">File</th>
+          <td>
+            {{ song.filepath }}<br />
+            <audio controls>
+              <source src="/static/musicfiles/{{ song.filepath }}" type="audio/mp3">
+            </audio>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Song Duration</th>
+          <td>{{ song.duration }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Album Name</th>
+          <td>{{ song.album_name }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Album Art</th>
+          <td>
+            {{ song.album_art }}<br />
+            <img src="/static/albumart/{{ song.album_art }}">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br />
+
+    <form action="/admin/song/delete/{{ song.id }}" method="post" enctype="multipart/form-data">
+      <button type="submit" class="btn btn-primary">Delete Song</button>
+    </form>
+
+    <br />
+
+  {% else %}
+
+    No song - how did you get here?
+
+  {% endif %}
+
+  <p><a href="/admin/songs">Back to all songs</a></p>
+
+{% endblock %}

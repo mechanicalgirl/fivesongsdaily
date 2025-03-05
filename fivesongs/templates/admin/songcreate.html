@@ -1,0 +1,44 @@
+{% extends 'adminbase.html' %}
+
+{% block content %}
+
+  <form action="/admin/song/create" method="post" enctype="multipart/form-data">
+  <table class="table">
+    <tbody>
+      <tr>
+        <th scope="row">Song Title</th>
+        <td><input class="form-control" type="text" name="title" placeholder="Song Title" value="" /></td>
+      </tr>
+      <tr>
+        <th scope="row">Artist Name</th>
+        <td><input class="form-control" type="text" name="artist" placeholder="Artist Name" value="" /></td>
+      </tr>
+      <tr>
+        <th scope="row">File</th>
+        <td>
+          <input class="form-control-file" type="file" name="filepath" placeholder="File Path" value="">
+        </td>
+      </tr>
+      <tr>
+        <th scope="row">Song Duration</th>
+        <td><input class="form-control" type="text" name="duration" placeholder="Song Duration" value="" /></td>
+      </tr>
+      <tr>
+        <th scope="row">Album Name</th>
+        <td><input class="form-control" type="text" name="album_name" placeholder="Album Name" value="" /></td>
+      </tr>
+      <tr>
+        <th scope="row">Album Art</th>
+        <td>
+          <input class="form-control-file" type="file" name="album_art" placeholder="Album Art" value="">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <br />
+  <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+
+  <p><a href="/admin/songs">Back to all songs</a></p>
+
+{% endblock %}

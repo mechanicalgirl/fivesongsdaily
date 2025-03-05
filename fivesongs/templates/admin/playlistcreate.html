@@ -1,0 +1,67 @@
+{% extends 'adminbase.html' %}
+
+{% block content %}
+
+  <form action="/admin/playlist/create" method="post" enctype="multipart/form-data">
+
+  <table class="table">
+    <tbody>
+      <tr>
+        <th scope="row">Playlist Date</th>
+        <td><input class="form-control" type="text" name="play_date" placeholder="yyyy-mm-dd" value="" /></td>
+      </tr>
+      <tr>
+        <th scope="row" id="1">Song 1</th>
+        <td>
+          <select class="form-control" name="song-id-1">
+            <option value="">Choose a song</option>
+            {% for s in all_songs %}<option value="{{ s.id }}">{{ s.title }} - {{ s.artist }}</option>{% endfor %}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row" id="2">Song 2</th>
+        <td>
+          <select class="form-control" name="song-id-2">
+            <option value="">Choose a song</option>
+            {% for s in all_songs %}<option value="{{ s.id }}">{{ s.title }} - {{ s.artist }}</option>{% endfor %}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row" id="3">Song 3</th>
+        <td>
+          <select class="form-control" name="song-id-3">
+            <option value="">Choose a song</option>
+            {% for s in all_songs %}<option value="{{ s.id }}">{{ s.title }} - {{ s.artist }}</option>{% endfor %}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row" id="4">Song 4</th>
+        <td>
+          <select class="form-control" name="song-id-4">
+            <option value="">Choose a song</option>
+            {% for s in all_songs %}<option value="{{ s.id }}">{{ s.title }} - {{ s.artist }}</option>{% endfor %}
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <th scope="row" id="5">Song 5</th>
+        <td>
+          <select class="form-control" name="song-id-5">
+            <option value="">Choose a song</option>
+            {% for s in all_songs %}<option value="{{ s.id }}">{{ s.title }} - {{ s.artist }}</option>{% endfor %}
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button type="submit" class="btn btn-primary">Submit</button>
+
+  </form>
+  <br />
+
+  <p><a href="/admin/playlists">Back to all playlists</a></p>
+
+{% endblock %}

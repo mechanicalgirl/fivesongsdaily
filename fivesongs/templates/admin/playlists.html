@@ -1,0 +1,37 @@
+{% extends 'adminbase.html' %}
+
+{% block content %}
+
+  <p><a href="/admin/playlist/create">Add a new playlist</a></p>
+  <br />
+
+  {% if playlists %}
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Playlist Date</th>
+          <th scope="col">Songs</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for playlist in playlists %}
+        <tr>
+          <th scope="row"><a href="/admin/playlist/{{ playlist.id }}">{{ playlist.id }}</a></th>
+          <td>{{ playlist.play_date }}</td>
+          <td>
+            {% if playlist.songs %}
+              {% for song in playlist.songs %}
+                {{ song }}<br />
+              {% endfor %}
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    No playlists available.<br />
+  {% endif %}
+
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'adminbase.html' %}
+
+{% block content %}
+
+  {% if playlist %}
+
+    <a href="/admin/playlist/edit/{{ playlist.id }}">Edit this playlist</a><br />
+    <table class="table">
+      <tbody>
+        <tr>
+          <th scope="row">Playlist Date</th>
+          <td>{{ playlist.play_date }}</td>
+        </tr>
+        <tr>
+          <th scope="row">Songs</th>
+          <td>
+            {% if songs %}
+              {% for song in songs %}
+                {{ song.title }} - {{ song.artist }}<br />
+                <audio controls>
+                  <source src="/static/musicfiles/{{ song.filepath }}" type="audio/mp3">
+                </audio><br /><br />
+              {% endfor %}
+            {% endif %}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <br />
+
+    <form action="/admin/playlist/delete/{{ playlist.id }}" method="post" enctype="multipart/form-data">
+      <button type="submit" class="btn btn-primary">Delete Playlist</button>
+    </form>
+
+    <br />
+
+  {% else %}
+
+    No playlist - how did you get here?
+
+  {% endif %}
+
+  <p><a href="/admin/playlists">Back to all playlists</a></p>  
+
+{% endblock %}

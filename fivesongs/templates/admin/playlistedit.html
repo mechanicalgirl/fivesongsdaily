@@ -1,0 +1,49 @@
+{% extends 'adminbase.html' %}
+
+{% block content %}
+
+  {% if playlist %}
+
+    <form action="/admin/playlist/edit/{{ playlist.id }}" method="post" enctype="multipart/form-data">
+
+    <table class="table">
+      <tbody>
+        <tr>
+          <th scope="row">Playlist Date</th>
+          <td>{{ playlist.play_date }} <!-- date cannot be edited --></td>
+        </tr>
+    {% if songs %}
+      {% for song in songs %}
+          <th scope="row" id="{{ song.index }}">Song {{ songs.index(song) }}</th>
+          <td>
+            <div class="form-group">
+              <select class="form-control" name="song-id-{{ songs.index(song) }}">
+                <option value="{{ song.id }}" selected>{{ song.title }} - {{ song.artist }}</option>
+                {% for s in all_songs %}
+                  <option value="{{ s.id }}">{{ s.title }} - {{ s.artist }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+          </td>
+        </tr>
+      {% endfor %}
+    {% else %}
+      <br />
+    {% endif %}
+      </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <br />
+
+  {% else %}
+
+    No playlist - how did you get here?
+
+  {% endif %}
+
+  <p><a href="/admin/playlists">Back to all playlists</a></p>
+
+{% endblock %}

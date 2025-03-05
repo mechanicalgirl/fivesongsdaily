@@ -1,0 +1,54 @@
+{% extends 'adminbase.html' %}
+
+{% block content %}
+
+  {% if song %}
+
+    <form action="/admin/song/edit/{{ song.id }}" method="post" enctype="multipart/form-data">
+    <table class="table">
+      <tbody>
+        <tr>
+          <th scope="row">Song Title</th>
+          <td><input class="form-control" type="text" name="title" placeholder="Song Title" value="{{ song.title }}" /></td>
+        </tr>
+        <tr>
+          <th scope="row">Artist Name</th>
+          <td><input class="form-control" type="text" name="artist" placeholder="Artist Name" value="{{ song.artist }}" /></td>
+        </tr>
+        <tr>
+          <th scope="row">File</th>
+          <td>
+            <input class="form-control-file" type="file" name="filepath" placeholder="File Path" value="{{ song.filepath }}">
+            Current: {{ song.filepath }}
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Song Duration</th>
+          <td><input class="form-control" type="text" name="duration" placeholder="Song Duration" value="{{ song.duration }}" /></td>
+        </tr>
+        <tr>
+          <th scope="row">Album Name</th>
+          <td><input class="form-control" type="text" name="album_name" placeholder="Album Name" value="{{ song.album_name }}" /></td>
+        </tr>
+        <tr>
+          <th scope="row">Album Art</th>
+          <td>
+            <input class="form-control-file" type="file" name="album_art" placeholder="Album Art" value="{{ song.album_art }}">
+            Current: {{ song.album_art }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- playlist_id populated on the playlist side -->
+    <!-- created_at auto-populated on the POST -->
+    <br />
+    <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+  {% else %}
+
+  {% endif %}
+
+  <p><a href="/admin/songs">Back to all songs</a></p>
+
+{% endblock %}

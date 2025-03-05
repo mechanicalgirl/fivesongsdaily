@@ -1,0 +1,61 @@
+{% extends 'adminbase.html' %}
+
+{% block content %}
+
+  <p><a href="/admin/songs">All songs</a> | <a href="/admin/song/create">Add a new song</a> | Most recent songs:</p>
+  {% if songs %}
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Title</th>
+          <th scope="col">Artist</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for song in songs %}
+        <tr>
+          <th scope="row"><a href="/admin/song/{{ song.id }}">{{ song.id }}</a></th>
+          <td>{{ song.title }}</td>
+          <td>{{ song.artist }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    No songs available.<br />
+  {% endif %}
+
+  <br />
+
+  <p><a href="/admin/playlists">All playlists</a> | <a href="/admin/playlist/create">Create a new playlist</a> | Most recent playlists:</p>
+  {% if playlists %}
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Playlist Date</th>
+          <th scope="col">Songs</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for playlist in playlists %}
+        <tr>
+          <th scope="row"><a href="/admin/playlist/{{ playlist.id }}">{{ playlist.id }}</a></th>
+          <td>{{ playlist.play_date }}</td>
+          <td>
+            {% if playlist.songs %}
+              {% for song in playlist.songs %}
+                {{ song }}<br />
+              {% endfor %}
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    No playlists available.<br />
+  {% endif %}
+
+{% endblock %}
