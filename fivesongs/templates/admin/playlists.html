@@ -12,6 +12,7 @@
           <th scope="col">Id</th>
           <th scope="col">Playlist Date</th>
           <th scope="col">Songs</th>
+          <th scope="col">Complete</th>
         </tr>
       </thead>
       <tbody>
@@ -24,6 +25,13 @@
               {% for song in playlist.songs %}
                 {{ song }}<br />
               {% endfor %}
+            {% endif %}
+          </td>
+          <td>
+            {% if playlist.alert %}
+              <span style="color: red;">&#x2714;</span>
+            {% else %}
+              <span style="color: green;">&#x2714;</span>
             {% endif %}
           </td>
         </tr>

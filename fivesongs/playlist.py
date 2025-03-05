@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
 )
@@ -18,8 +20,20 @@ def index():
         ORDER BY id ASC
     """
     db_songs = db.execute(song_query).fetchall()
-    ## TODO: if this list comes back empty, return the default list - ids 1-5
-    play_date = db.execute("SELECT play_date FROM playlist WHERE play_date = current_date").fetchone()
+
+    if db_songs:
+        play_date = db.execute("SELECT play_date FROM playlist WHERE play_date = current_date").fetchone()
+        play_date = play_date['play_date']
+    else:
+        song_query = """
+            SELECT id, artist, title, filepath, duration, album_name, album_art
+            FROM song
+            WHERE id IN (1, 2, 3, 4, 5)
+            ORDER BY id ASC
+        """
+        db_songs = db.execute(song_query).fetchall()
+        play_date = datetime.today().date()
+
     js_songs = []
     for song in db_songs:
         js_song = {
@@ -30,6 +44,7 @@ def index():
             "cover_art_url": f"/static/albumart/{song['album_art']}"
         }
         js_songs.append(js_song)
+
     return render_template('playlist/index.html', songs=db_songs, play_date=play_date, js_songs=js_songs)
 
 ###############################################

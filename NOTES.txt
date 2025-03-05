@@ -34,3 +34,5 @@ build and deploy notes:
 https://flask.palletsprojects.com/en/stable/tutorial/deploy/
 
 https://flask-sqlalchemy.palletsprojects.com/en/stable/models/
+
+https://getbootstrap.com/docs/3.3/

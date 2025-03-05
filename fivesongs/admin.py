@@ -10,6 +10,11 @@ from werkzeug.utils import secure_filename
 from fivesongs.auth import login_required
 from fivesongs.db import get_db
 
+MP3_UPLOAD_FOLDER = '/Users/barbarashaurette/Documents/code/fivesongsdaily/fivesongs/static/musicfiles'
+MP3_ALLOWED_EXTENSIONS = {'mp3'}
+ALBUMART_UPLOAD_FOLDER = '/Users/barbarashaurette/Documents/code/fivesongsdaily/fivesongs/static/albumart'
+ALBUMART_ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
 bp = Blueprint('admin', __name__)
 
 @bp.route('/admin')
@@ -24,7 +29,6 @@ def admin():
     """
     db_songs = db.execute(song_query).fetchall()
 
-    # TODO: alert on any empty playlists
     playlist_query = """
         SELECT id, play_date, created_at
         FROM playlist
@@ -37,11 +41,14 @@ def admin():
         playlist = {
             'id': p['id'],
             'play_date': p['play_date'],
-            'songs': []
+            'songs': [],
+            'alert': False
         }
         p_songs = db.execute(f"SELECT title, artist FROM song WHERE playlist_id = {p['id']}").fetchall()
         for s in p_songs:
             playlist['songs'].append(f"{s['title']} - {s['artist']}")
+        if len(playlist['songs']) < 5:
+            playlist['alert'] = True
         all_playlists.append(playlist)
     return render_template('admin/index.html', songs=db_songs, playlists=all_playlists)
 
@@ -61,7 +68,6 @@ def songs():
 @bp.route('/admin/playlists')
 # @login_required
 def playlists():
-    # TODO: alert on any empty playlists
     db = get_db()
     playlist_query = """
         SELECT id, play_date, created_at
@@ -79,6 +85,8 @@ def playlists():
         p_songs = db.execute(f"SELECT title, artist FROM song WHERE playlist_id = {p['id']}").fetchall()
         for s in p_songs:
             playlist['songs'].append(f"{s['title']} - {s['artist']}")
+        if len(playlist['songs']) < 5:
+            playlist['alert'] = True
         all_playlists.append(playlist)
     return render_template('admin/playlists.html', playlists=all_playlists)
 
@@ -86,7 +94,6 @@ def playlists():
 # @login_required
 def song(id):
     """ Display all metadata for a single song; link to edit page """
-    ## TODO: add delete option for a single song
     db = get_db()
     song_query = f"SELECT id, artist, title, filepath, duration, album_name, album_art, playlist_id, created_at FROM song WHERE id = {id}"
     db_song = db.execute(song_query).fetchone()
@@ -94,11 +101,6 @@ def song(id):
     if db_song['playlist_id']:
         play_date = db.execute(f"SELECT play_date FROM playlist WHERE id = {db_song['playlist_id']}").fetchone()
     return render_template('admin/song.html', song=db_song, play_date=play_date)
-
-MP3_UPLOAD_FOLDER = '/Users/barbarashaurette/Documents/code/fivesongsdaily/fivesongs/static/musicfiles'
-MP3_ALLOWED_EXTENSIONS = {'mp3'}
-ALBUMART_UPLOAD_FOLDER = '/Users/barbarashaurette/Documents/code/fivesongsdaily/fivesongs/static/albumart'
-ALBUMART_ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 def allowed_file(type, filename):
     if type == 'song':
@@ -113,26 +115,28 @@ def songedit(id):
     db = get_db()
     if request.method == 'POST':
         form_data = request.form
+
         songfile = request.files['filepath']
         albumartfile = request.files['album_art']
 
-        ## TODO: stop the overwrite of both files when either a new song file or album art is uploaded
-
+        file_update = ''
         if songfile and allowed_file('song', songfile.filename):
             filename = secure_filename(songfile.filename)
             songfile.save(os.path.join(MP3_UPLOAD_FOLDER, filename))
+            file_update = file_update + f"filepath = '{songfile.filename}', "
 
         if albumartfile and allowed_file('albumart', albumartfile.filename):
             filename = secure_filename(albumartfile.filename)
             albumartfile.save(os.path.join(ALBUMART_UPLOAD_FOLDER, filename))
+            file_update = file_update + f"album_art = '{albumartfile.filename}' "
 
         update_query = (f"UPDATE song SET title='{form_data['title']}', "
                         f"artist='{form_data['artist']}', "
                         f"duration='{form_data['duration']}', "
                         f"album_name='{form_data['album_name']}', "
-                        f"filepath = '{songfile.filename}', "
-                        f"album_art = '{albumartfile.filename}' "
+                        f"{file_update} "
                         f"WHERE id = {id} RETURNING id;")
+        print(update_query)
         song_update = db.execute(update_query).fetchone()
         db.commit()
         return redirect('/admin/songs', 302)
@@ -191,6 +195,15 @@ def songdelete(id):
     db = get_db()
     if request.method == 'POST':
         form_data = request.form
+
+        try:
+            song_metadata = db.execute(f"SELECT filepath, album_art FROM song WHERE id = {id}").fetchone()
+            os.remove(os.path.join(MP3_UPLOAD_FOLDER, song_metadata['filepath']))
+            ## Don't remove the image file - album art can be shared by multiple songs
+            # os.remove(os.path.join(ALBUMART_UPLOAD_FOLDER, song_metadata['album_art']))
+        except Exception as e:
+            print(e)
+
         delete_query = f"DELETE FROM song WHERE id = {id} RETURNING id;"
         song_delete = db.execute(delete_query).fetchone()
         db.commit()
@@ -215,6 +228,7 @@ def playlistedit(id):
     """ Get and process the playlist edit form """
     db = get_db()
     if request.method == 'POST':
+        # TODO: validate so that the same group of songs cannot be on more than one playlist?
         form_data = request.form
         song_ids = [int(form_data[x]) for x in form_data]
         update_query = f"UPDATE song SET playlist_id = {id} WHERE id IN {tuple(song_ids)} RETURNING NULL"
@@ -230,15 +244,13 @@ def playlistedit(id):
         all_songs = db.execute("SELECT id, artist, title, filepath, album_art FROM song ORDER BY id ASC").fetchall()
         return render_template('admin/playlistedit.html', songs=db_songs, playlist=db_playlist, all_songs=all_songs)
 
-# TODO: validate so that the same group of songs cannot be on more than one playlist?
-
 @bp.route('/admin/playlist/create', methods=('GET', 'POST'))
 # @login_required
 def playlistcreate():
     """ Get and process the playlist create form """
     if request.method == 'POST':
+        # TODO: validate so that the same group of songs cannot be on more than one playlist?
         form_data = request.form
-
         db = get_db()
         try:
             db = get_db()
@@ -251,11 +263,14 @@ def playlistcreate():
             playlist_id = playlist_create['id']
 
             # also do the song update with the new playlist id
-            song_ids = [int(form_data[x]) for x in form_data if x.startswith('song-id-')]
-            update_query = f"UPDATE song SET playlist_id = {playlist_id} WHERE id IN {tuple(song_ids)} RETURNING NULL"
-            print(update_query)
-            songs_update = db.execute(update_query).fetchone()
-            db.commit()
+            try:
+                song_ids = [int(form_data[x]) for x in form_data if x.startswith('song-id-')]
+                update_query = f"UPDATE song SET playlist_id = {playlist_id} WHERE id IN {tuple(song_ids)} RETURNING NULL"
+                print(update_query)
+                songs_update = db.execute(update_query).fetchone()
+                db.commit()
+            except Exception as e:
+                print(e)  # find a more elegant way to handle the error (a playlist created without adding any songs)
             return redirect(f"/admin/playlist/{playlist_id}", 302)
 
         except Exception as e:
