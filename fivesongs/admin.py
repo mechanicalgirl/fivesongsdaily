@@ -18,7 +18,7 @@ ALBUMART_ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 bp = Blueprint('admin', __name__)
 
 @bp.route('/admin')
-# @login_required
+@login_required
 def admin():
     db = get_db()
     song_query = """
@@ -53,7 +53,7 @@ def admin():
     return render_template('admin/index.html', songs=db_songs, playlists=all_playlists)
 
 @bp.route('/admin/songs')
-# @login_required
+@login_required
 def songs():
     """ List all songs """
     db = get_db()
@@ -66,7 +66,7 @@ def songs():
     return render_template('admin/songs.html', songs=db_songs)
 
 @bp.route('/admin/playlists')
-# @login_required
+@login_required
 def playlists():
     db = get_db()
     playlist_query = """
@@ -91,7 +91,7 @@ def playlists():
     return render_template('admin/playlists.html', playlists=all_playlists)
 
 @bp.route('/admin/song/<int:id>')
-# @login_required
+@login_required
 def song(id):
     """ Display all metadata for a single song; link to edit page """
     db = get_db()
@@ -109,7 +109,7 @@ def allowed_file(type, filename):
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALBUMART_ALLOWED_EXTENSIONS
 
 @bp.route('/admin/song/edit/<int:id>', methods=('GET', 'POST'))
-# @login_required
+@login_required
 def songedit(id):
     """ Get and process the song edit form """
     db = get_db()
@@ -149,7 +149,7 @@ def songedit(id):
         return render_template('admin/songedit.html', song=db_song, play_date=play_date)
 
 @bp.route('/admin/song/create', methods=('GET', 'POST'))
-# @login_required
+@login_required
 def songcreate(): 
     """ Get and process the song create form """
     # https://flask.palletsprojects.com/en/stable/patterns/fileuploads/
@@ -189,7 +189,7 @@ def songcreate():
         return render_template('admin/songcreate.html')
 
 @bp.route('/admin/song/delete/<int:id>', methods=["POST"])
-# @login_required
+@login_required
 def songdelete(id):
     """ Process song deletion """
     db = get_db()
@@ -212,7 +212,7 @@ def songdelete(id):
         return redirect('/admin/songs', 302)
 
 @bp.route('/admin/playlist/<int:id>', methods=('GET', 'POST'))
-# @login_required
+@login_required
 def playlist(id):
     """ Display all metadata for a single playlist; link to edit page """
     db = get_db()
@@ -223,7 +223,7 @@ def playlist(id):
     return render_template('admin/playlist.html', songs=db_songs, playlist=db_playlist)
 
 @bp.route('/admin/playlist/edit/<int:id>', methods=('GET', 'POST'))
-# @login_required
+@login_required
 def playlistedit(id):
     """ Get and process the playlist edit form """
     db = get_db()
@@ -245,7 +245,7 @@ def playlistedit(id):
         return render_template('admin/playlistedit.html', songs=db_songs, playlist=db_playlist, all_songs=all_songs)
 
 @bp.route('/admin/playlist/create', methods=('GET', 'POST'))
-# @login_required
+@login_required
 def playlistcreate():
     """ Get and process the playlist create form """
     if request.method == 'POST':
@@ -284,7 +284,7 @@ def playlistcreate():
         return render_template('admin/playlistcreate.html', all_songs=all_songs)
 
 @bp.route('/admin/playlist/delete/<int:id>', methods=["POST"])
-# @login_required
+@login_required
 def playlistdelete(id):
     """ Process playlist deletion """
     db = get_db()

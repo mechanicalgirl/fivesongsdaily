@@ -22,6 +22,10 @@ def register():
         elif not password:
             error = 'Password is required.'
 
+        # Make sure no one but me can register for now
+        if username != 'bshaurette':
+            error = 'You are not allowed to register.'
+
         if error is None:
             try:
                 db.execute(
@@ -49,17 +53,21 @@ def login():
             'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
 
+        print(user)
+
         if user is None:
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
 
+        print(error)
+
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            return redirect(url_for('index'))
-
-        flash(error)
+            print(session)
+            print(url_for('index'))
+            return redirect(url_for('admin'))
 
     return render_template('auth/login.html')
 

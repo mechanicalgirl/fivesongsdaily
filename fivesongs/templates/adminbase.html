@@ -15,16 +15,15 @@
 <nav class="navbar navbar-light bg-light">
   <a class="navbar-brand" href="/">Site Home</a>
   <a class="navbar-brand" href="/admin">Admin Home</a>
-  {% if g.user %}
-    <span>{{ g.user['username'] }}</span>
-    <a class="navbar-brand" href="{{ url_for('auth.logout') }}">Log Out</a>
+  <a class="navbar-brand" href="{{ url_for('auth.logout') }}">Log Out</a>
+  {% if g.user %} 
+    <div>You are logged in as {{ g.user['username'] }}</div>
   {% else %}
     <!-- TODO: this shouldn't be visible once the admin is behind a login -->
-    <a class="navbar-brand" href="{{ url_for('auth.register') }}">Register</a>
-    <a class="navbar-brand" href="{{ url_for('auth.login') }}">Log In</a>
+    <a href="{{ url_for('auth.register') }}">Register</a>
+    <a href="{{ url_for('auth.login') }}">Log In</a>
   {% endif %}
 </nav>
-<br />
 
 <div class="container">
   <header>
