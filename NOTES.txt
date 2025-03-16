@@ -5,6 +5,8 @@ source venv/bin/activate
 python3 -m pip install -r requirements.txt
 
 flask --app fivesongs run --debug
+OR
+uwsgi uwsgi.ini
 
 ============================================
 
@@ -32,7 +34,14 @@ UPDATE playlist SET play_date = CURRENT_DATE;
 
 build and deploy notes:
 https://flask.palletsprojects.com/en/stable/tutorial/deploy/
-
 https://flask-sqlalchemy.palletsprojects.com/en/stable/models/
-
 https://getbootstrap.com/docs/3.3/
+
+==============================================
+
+ssh mechanic@hercules.uberspace.de
+python3.11 -m venv venv
+source venv/bin/activate
+python3.11 -m pip install -r requirements.txt
+
+
