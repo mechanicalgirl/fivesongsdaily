@@ -4,111 +4,140 @@
 
   {% if songs %}
 
-  <center>
-    <h2>Five songs for: {{ play_date }}</h2>
-  </center>
+    <center>
+      <h2>Five songs for: {{ play_date }}</h2>
+    </center>
 
-  <!-- Blue Playlist Container -->
-  <div id="blue-playlist-container">
 
-    <!-- Amplitude Player -->
-    <div id="amplitude-player">
+    <div id="container">
 
-      <!-- Left Side Player -->
-      <div id="amplitude-left">
-        <img data-amplitude-song-info="cover_art_url" class="album-art"/>
-        <div class="amplitude-visualization" id="large-visualization">
+      <div id="player">
 
-        </div>
-        <div id="player-left-bottom">
-          <div id="time-container">
-            <span class="current-time">
-              <span class="amplitude-current-minutes" ></span>:<span class="amplitude-current-seconds"></span>
-            </span>
-            <div id="progress-container">
-              <div class="amplitude-wave-form">
+        <div class="Ipod">
+          <div class="Screen">
+            <div class="Screen__title">Now Playing</div>
 
+            <div class="Screen__meta">
+
+              <div class="Screen__album-art-container">
+                <img data-amplitude-song-info="cover_art_url" class="Screen__album-art" id="album-art" />
               </div>
-              <input type="range" class="amplitude-song-slider"/>
-              <progress id="song-played-progress" class="amplitude-song-played-progress"></progress>
-              <progress id="song-buffered-progress" class="amplitude-buffered-progress" value="0"></progress>
-            </div><!-- end progress-container -->
-            <span class="duration">
-              <span class="amplitude-duration-minutes"></span>:<span class="amplitude-duration-seconds"></span>
-            </span>
-          </div><!-- end time-container -->
 
-          <div id="control-container">
-            <div id="repeat-container">
-              <div class="amplitude-repeat" id="repeat"></div>
-              <div class="amplitude-shuffle amplitude-shuffle-off" id="shuffle"></div>
-            </div>
+              <div class="Screen__info">
+                <div data-amplitude-song-info="name" class="Screen__row Screen__info-song-name"></div>
 
-            <div id="central-control-container">
-              <div id="central-controls">
-                <div class="amplitude-prev" id="previous"></div>
-                <div class="amplitude-play-pause" id="play-pause"></div>
-                <div class="amplitude-next" id="next"></div>
+                <div data-amplitude-song-info="artist" class="Screen__row Screen__info-artist"></div>
+                <div data-amplitude-song-info="album" class="Screen__row Screen__info-album"></div>
+              </div> <!-- .Screen__info -->
+
+            </div> <!-- .Screen__meta -->
+
+            <div class="Screen__time">
+              <div class="Screen__progress">
+                <progress class="Screen__progress-element amplitude-song-played-progress"></progress>
+                <progress class="amplitude-buffered-progress" value="0"></progress>
+                <input type="range" class="Screen__progress-slider amplitude-song-slider" />
+              </div>
+
+              <div class="Screen__time-durations">
+                <span class="current-time">
+                  <span class="amplitude-current-minutes" ></span>:<span class="amplitude-current-seconds"></span>
+                </span>
+                <span class="duration">
+                  <span class="amplitude-duration-minutes"></span>:<span class="amplitude-duration-seconds"></span>
+                </span>
+              </div>
+
+            </div> <!-- .Screen__time -->
+
+          </div> <!-- .Screen -->
+
+          <div class="Controls">
+            <div class="Controls__inner">
+              <div class="Controls__repeat-and-shuffle">
+                <div class="amplitude-repeat" id="repeat"></div>
+                <div class="amplitude-shuffle amplitude-shuffle-off" id="shuffle"></div>
+              </div>
+
+              <div class="Controls__main">
+                <button type="button" class="amplitude-prev" id="previous">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="-128 -128 768 768">
+                    <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                    <path fill="currentColor" d="M493.6 445c-11.2 5.3-24.5 3.6-34.1-4.4L288 297.7 288 416c0 12.4-7.2 23.7-18.4 29s-24.5 3.6-34.1-4.4L64 297.7 64 416c0 17.7-14.3 32-32 32s-32-14.3-32-32L0 96C0 78.3 14.3 64 32 64s32 14.3 32 32l0 118.3L235.5 71.4c9.5-7.9 22.8-9.7 34.1-4.4S288 83.6 288 96l0 118.3L459.5 71.4c9.5-7.9 22.8-9.7 34.1-4.4S512 83.6 512 96l0 320c0 12.4-7.2 23.7-18.4 29z"/>
+                  </svg>
+                </button>
+                <button type="button" class="amplitude-repeat" id="repeat">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="-128 -128 768 768">
+                    <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                    <path fill="currentColor" d="M0 224c0 17.7 14.3 32 32 32s32-14.3 32-32c0-53 43-96 96-96l160 0 0 32c0 12.9 7.8 24.6 19.8 29.6s25.7 2.2 34.9-6.9l64-64c12.5-12.5 12.5-32.8 0-45.3l-64-64c-9.2-9.2-22.9-11.9-34.9-6.9S320 19.1 320 32l0 32L160 64C71.6 64 0 135.6 0 224zm512 64c0-17.7-14.3-32-32-32s-32 14.3-32 32c0 53-43 96-96 96l-160 0 0-32c0-12.9-7.8-24.6-19.8-29.6s-25.7-2.2-34.9 6.9l-64 64c-12.5 12.5-12.5 32.8 0 45.3l64 64c9.2 9.2 22.9 11.9 34.9 6.9s19.8-16.6 19.8-29.6l0-32 160 0c88.4 0 160-71.6 160-160z"/>
+                  </svg>
+                </button>
+                <button type="button" class="amplitude-play-pause" id="play-pause">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
+                    <path d="M15 6.75a.75.75 0 0 0-.75.75V18a.75.75 0 0 0 .75.75h.75a.75.75 0 0 0 .75-.75V7.5a.75.75 0 0 0-.75-.75H15ZM20.25 6.75a.75.75 0 0 0-.75.75V18c0 .414.336.75.75.75H21a.75.75 0 0 0 .75-.75V7.5a.75.75 0 0 0-.75-.75h-.75ZM5.055 7.06C3.805 6.347 2.25 7.25 2.25 8.69v8.122c0 1.44 1.555 2.343 2.805 1.628l7.108-4.061c1.26-.72 1.26-2.536 0-3.256L5.055 7.061Z" />
+                  </svg>
+                </button>
+                <button type="button" class="amplitude-next" id="next">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="-128 -128 768 768">
+                    <!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                    <path fill="currentColor" d="M18.4 445c11.2 5.3 24.5 3.6 34.1-4.4L224 297.7 224 416c0 12.4 7.2 23.7 18.4 29s24.5 3.6 34.1-4.4L448 297.7 448 416c0 17.7 14.3 32 32 32s32-14.3 32-32l0-320c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 118.3L276.5 71.4c-9.5-7.9-22.8-9.7-34.1-4.4S224 83.6 224 96l0 118.3L52.5 71.4c-9.5-7.9-22.8-9.7-34.1-4.4S0 83.6 0 96L0 416c0 12.4 7.2 23.7 18.4 29z"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="Controls__volume">
+                <div class="Controls__volume-inner">
+                  <div class="amplitude-mute amplitude-not-muted"></div>
+                  <input type="range" class="amplitude-volume-slider" />
+                  <div class="ms-range-fix"></div>
+                </div>
               </div>
             </div>
 
-            <div id="volume-container">
-              <div class="volume-controls">
-                <div class="amplitude-mute amplitude-not-muted"></div>
-                <input type="range" class="amplitude-volume-slider"/>
-                <div class="ms-range-fix"></div>
+
+          </div>
+
+          <div class="Ipod__wheel">
+            <div class="Ipod__wheel-outer">
+              <div class="Ipod__wheel-inner"></div>
+            </div>
+
+          </div>
+
+        </div> <!-- .Ipod -->
+
+
+        <!-- RIGHT SIDE FOLLOWS -->
+
+        <ul class="Playlist">
+          {% for song in songs %}
+
+            <li class="Song amplitude-song-container amplitude-play-pause" data-amplitude-song-index="{{ songs.index(song) }}">
+              <div class="Song__now-playing">
+                <button type="button" class="Song__now-playing-button">
+                  <img class="Song__now-playing-image" src="https://521dimensions.com/img/open-source/amplitudejs/blue-player/now-playing.svg" />
+                </button>
               </div>
-              <div class="amplitude-shuffle amplitude-shuffle-off" id="shuffle-right"></div>
-            </div>
-          </div><!-- end control-container -->
-
-          <div id="meta-container">
-            <span data-amplitude-song-info="name" class="song-name"></span>
-
-            <div class="song-artist-album">
-              <span data-amplitude-song-info="artist"></span>
-              <span data-amplitude-song-info="album"></span>
-            </div>
-          </div><!-- end meta-container -->
-
-        </div><!-- player-left-bottom -->
- 
-      </div><!-- end amplitude-left -->
-      <!-- End Left Side Player -->
-
-      <!-- Right Side Player -->
-      <div id="amplitude-right">
-
-        {% for song in songs %}
-
-          <div class="song amplitude-song-container amplitude-play-pause" data-amplitude-song-index="{{ songs.index(song) }}">
-            <div class="song-now-playing-icon-container">
-              <div class="play-button-container">
-
+              <div class="Song__meta">
+                <span class="Song__title" title="{{ song.title }}">{{ song.title }}</span>
+                <span class="Song__artist" title="{{ song.artist }}">{{ song.artist }}</span>
               </div>
-              <img class="now-playing" src="https://521dimensions.com/img/open-source/amplitudejs/blue-player/now-playing.svg"/>
-            </div>
-            <div class="song-meta-data">
-              <span class="song-title">{{ song.title }}</span>
-              <span class="song-artist">{{ song.artist }}</span>
-            </div>
-            <!-- replace with download links icon
-            <a href="https://switchstancerecordings.bandcamp.com/track/risin-high-feat-raashan-ahmad" class="bandcamp-link" target="_blank">
+
+              <!-- replace with download links icon
+              <a href="https://switchstancerecordings.bandcamp.com/track/risin-high-feat-raashan-ahmad" class="bandcamp-link" target="_blank">
               <img class="bandcamp-grey" src="https://521dimensions.com/img/open-source/amplitudejs/blue-player/bandcamp-grey.svg"/>
               <img class="bandcamp-white" src="https://521dimensions.com/img/open-source/amplitudejs/blue-player/bandcamp-white.svg"/>
-            </a>
-            -->
-            <span class="song-duration">{{ song.duration }}</span>
-          </div><!-- end data-amplitude-song-index -->
+              </a>
+              -->
+              <span class="Song__duration">{{ song.duration }}</span>
+            </li> <!-- end data-amplitude-song-index -->
 
-        {% endfor %}
+          {% endfor %}
+        </ul>
 
-      </div><!-- end amplitude-right -->
-      <!-- End Right Side Player -->
+      </div>
 
-    </div><!-- End Amplitude Player -->
-
-  </div><!-- End Blue Playlist Container -->
+    </div>
 
   {% else %}
     No songs available for this date.<br />
@@ -116,81 +145,47 @@
 
 <script>
 
-/*
-	When the bandcamp link is pressed, stop all propagation so AmplitudeJS doesn't
-	play the song.
-*/
-let bandcampLinks = document.getElementsByClassName('bandcamp-link');
+{
+  // The title, artist, and album on the iPod-esque screen have `text-overflow:
+  // ellipsis` applied in CSS so that they don't wrap to a second row. For this
+  // reason, it'd be useful to have the full text visible on hover as a
+  // tooltip.
+  //
+  // So we spy on changes to the nodes’ contents and keep their `title`
+  // attributes in sync.
 
-for( var i = 0; i < bandcampLinks.length; i++ ){
-	bandcampLinks[i].addEventListener('click', function(e){
-		e.stopPropagation();
-	});
+  function callback(mutationList, observer) {
+    for (let { target } of mutationList) {
+      let { innerText } = target;
+      let title = target.getAttribute('title');
+      if (title === innerText) return;
+      target.setAttribute('title', innerText);
+    }
+  }
+
+  const titleFiller = new MutationObserver(callback);
+
+  let rows = document.querySelectorAll('.Screen__row');
+  for (let row of rows) {
+    titleFiller.observe(row, { childList: true });
+  }
 }
 
 
-let songElements = document.getElementsByClassName('song');
-
-for( var i = 0; i < songElements.length; i++ ){
-	/*
-		Ensure that on mouseover, CSS styles don't get messed up for active songs.
-	*/
-	songElements[i].addEventListener('mouseover', function(){
-		this.style.backgroundColor = '#00A0FF';
-
-		this.querySelectorAll('.song-meta-data .song-title')[0].style.color = '#FFFFFF';
-		this.querySelectorAll('.song-meta-data .song-artist')[0].style.color = '#FFFFFF';
-
-		if( !this.classList.contains('amplitude-active-song-container') ){
-			this.querySelectorAll('.play-button-container')[0].style.display = 'block';
-		}
-
-		this.querySelectorAll('img.bandcamp-grey')[0].style.display = 'none';
-		this.querySelectorAll('img.bandcamp-white')[0].style.display = 'block';
-		this.querySelectorAll('.song-duration')[0].style.color = '#FFFFFF';
-	});
-
-	/*
-		Ensure that on mouseout, CSS styles don't get messed up for active songs.
-	*/
-	songElements[i].addEventListener('mouseout', function(){
-		this.style.backgroundColor = '#FFFFFF';
-		this.querySelectorAll('.song-meta-data .song-title')[0].style.color = '#272726';
-		this.querySelectorAll('.song-meta-data .song-artist')[0].style.color = '#607D8B';
-		this.querySelectorAll('.play-button-container')[0].style.display = 'none';
-		this.querySelectorAll('img.bandcamp-grey')[0].style.display = 'block';
-		this.querySelectorAll('img.bandcamp-white')[0].style.display = 'none';
-		this.querySelectorAll('.song-duration')[0].style.color = '#607D8B';
-	});
-
-	/*
-		Show and hide the play button container on the song when the song is clicked.
-	*/
-	songElements[i].addEventListener('click', function(){
-		this.querySelectorAll('.play-button-container')[0].style.display = 'none';
-	});
-}
-
-/*
-	Initializes AmplitudeJS
-*/
 Amplitude.init({
-  "songs": {{ js_songs | safe }},
-  "callbacks": {
-    'play': function(){
-      document.getElementById('album-art').style.visibility = 'hidden';
-      document.getElementById('large-visualization').style.visibility = 'visible';
+  songs: {{ js_songs | safe }},
+  callbacks: {
+    play() {
+      document.querySelector('.Screen')?.classList.add('Screen--playing');
     },
-    'pause': function(){
-      document.getElementById('album-art').style.visibility = 'visible';
-      document.getElementById('large-visualization').style.visibility = 'hidden';
+    pause (){
+      document.querySelector('.Screen')?.classList.remove('Screen--playing');
     }
   },
   waveforms: {
     sample_rate: 50
   }
 });
-document.getElementById('large-visualization').style.height = document.getElementById('album-art').offsetWidth + 'px';
 </script>
 
 {% endblock %}

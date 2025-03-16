@@ -9,19 +9,20 @@ To run locally:
 
 - Activate the virtualenv at the beginning of every session:
 
-```
+```sh
 source venv/bin/activate
 python3 -m pip install -r requirements.txt
 ```
 
 - initialize the db
 
-```flask --app fivesongs init-db```
+```sh
+flask --app fivesongs init-db
+```
 
 
 - To start up the app (and restart after code changes):
 
-```flask --app fivesongs run --debug```
-
-
-
+```sh
+flask --app fivesongs run --debug
+```
