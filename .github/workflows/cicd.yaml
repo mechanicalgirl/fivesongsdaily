@@ -14,7 +14,7 @@ jobs:
         with:
           switches: -avrh --delete
           path: /
-          remote_path: /home/mechanic
+          remote_path: /home/mechanic/fivesongsdaily
           remote_host: ${{ secrets.SSH_HOST }}
           remote_user: ${{ secrets.SSH_USERNAME }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
