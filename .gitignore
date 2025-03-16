@@ -1,4 +1,6 @@
 .DS_Store
+instance/fivesongs.sqlite3
+
 *.bak
 venv
 *.swp
