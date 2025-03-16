@@ -41,6 +41,8 @@ https://flask.palletsprojects.com/en/stable/tutorial/deploy/
 https://flask-sqlalchemy.palletsprojects.com/en/stable/models/
 https://getbootstrap.com/docs/3.3/
 
+https://lab.uberspace.de/guide_flask/
+
 # GHA ci/cd
 https://lab.uberspace.de/howto_automatic-deployment/#github
 
@@ -56,4 +58,7 @@ python3.11 -m pip install -r requirements.txt
 Player docs:
 https://521dimensions.com/open-source/amplitudejs/docs/help-and-support/#professional-support
 https://521dimensions.com/open-source/amplitudejs/docs/examples/blue-playlist.html
+
+Uberspace dashboard:
+https://dashboard.uberspace.de/dashboard/datasheet?asteroid=mechanic
 
