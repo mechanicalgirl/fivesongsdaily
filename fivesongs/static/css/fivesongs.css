@@ -7,7 +7,7 @@ body {
     background: url('/static/images/bg_footer.gif') repeat-x;
 }
 
-.player_background { 
+.player_background {
   background: url('/static/images/lgo_main.png') no-repeat scroll 50% 0px;
   font-size: 14px;
   margin: 5px 25px 25px 25px;
@@ -28,3 +28,9 @@ body {
 
 #bottom{ width: 1000px; }
 .footerlink, .footerlink a { float: left; margin: 5px; color: #999; text-decoration: none; }
+
+
+@font-face {
+  font-family: "Chicago";
+  src: url("font/ChicagoFLF.woff2") format('woff2');
+}

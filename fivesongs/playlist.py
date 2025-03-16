@@ -7,6 +7,7 @@ from werkzeug.exceptions import abort
 
 from fivesongs.auth import login_required
 from fivesongs.db import get_db
+import json
 
 bp = Blueprint('playlist', __name__)
 
@@ -46,3 +47,6 @@ def index():
         js_songs.append(js_song)
 
     return render_template('playlist/index.html', songs=db_songs, play_date=play_date, js_songs=js_songs)
+    return render_template(
+        'playlist/index.html.jinja',
+        songs=db_songs, play_date=play_date, js_songs=json.dumps(js_songs))
