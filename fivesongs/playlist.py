@@ -48,5 +48,5 @@ def index():
 
     return render_template('playlist/index.html', songs=db_songs, play_date=play_date, js_songs=js_songs)
     return render_template(
-        'playlist/index.html.jinja',
+        'playlist/index.html',
         songs=db_songs, play_date=play_date, js_songs=json.dumps(js_songs))
