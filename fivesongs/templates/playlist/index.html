@@ -4,11 +4,6 @@
 
   {% if songs %}
 
-    <center>
-      <h2>Five songs for: {{ play_date }}</h2>
-    </center>
-
-
     <div id="container">
 
       <div id="player">
@@ -108,7 +103,6 @@
 
 
         <!-- RIGHT SIDE FOLLOWS -->
-
         <ul class="Playlist">
           {% for song in songs %}
 
@@ -136,6 +130,8 @@
         </ul>
 
       </div>
+
+      <center><i>{{ play_date }}</i></center>
 
     </div>
 
