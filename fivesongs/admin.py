@@ -10,9 +10,8 @@ from werkzeug.utils import secure_filename
 from fivesongs.auth import login_required
 from fivesongs.db import get_db
 
-MP3_UPLOAD_FOLDER = '/Users/barbarashaurette/Documents/code/fivesongsdaily/fivesongs/static/musicfiles'
+UPLOAD_FOLDER = os.path.join(os.getcwd(), 'fivesongs/static')
 MP3_ALLOWED_EXTENSIONS = {'mp3'}
-ALBUMART_UPLOAD_FOLDER = '/Users/barbarashaurette/Documents/code/fivesongsdaily/fivesongs/static/albumart'
 ALBUMART_ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 bp = Blueprint('admin', __name__)
@@ -20,6 +19,7 @@ bp = Blueprint('admin', __name__)
 @bp.route('/admin')
 @login_required
 def admin():
+
     db = get_db()
     song_query = """
         SELECT id, artist, title
@@ -122,12 +122,12 @@ def songedit(id):
         file_update = ''
         if songfile and allowed_file('song', songfile.filename):
             filename = secure_filename(songfile.filename)
-            songfile.save(os.path.join(MP3_UPLOAD_FOLDER, filename))
+            songfile.save(os.path.join(UPLOAD_FOLDER + '/musicfiles', filename))
             file_update = file_update + f"filepath = '{songfile.filename}', "
 
         if albumartfile and allowed_file('albumart', albumartfile.filename):
             filename = secure_filename(albumartfile.filename)
-            albumartfile.save(os.path.join(ALBUMART_UPLOAD_FOLDER, filename))
+            albumartfile.save(os.path.join(UPLOAD_FOLDER + '/albumart', filename))
             file_update = file_update + f"album_art = '{albumartfile.filename}' "
 
         update_query = (f"UPDATE song SET title='{form_data['title']}', "
@@ -161,11 +161,11 @@ def songcreate():
 
         if songfile and allowed_file('song', songfile.filename):
             filename = secure_filename(songfile.filename)
-            songfile.save(os.path.join(MP3_UPLOAD_FOLDER, filename))
+            songfile.save(os.path.join(UPLOAD_FOLDER + '/musicfiles', filename))
 
         if albumartfile and allowed_file('albumart', albumartfile.filename):
             filename = secure_filename(albumartfile.filename)
-            albumartfile.save(os.path.join(ALBUMART_UPLOAD_FOLDER, filename))
+            albumartfile.save(os.path.join(UPLOAD_FOLDER + '/albumart', filename))
 
         song_filepath = songfile.filename.replace(' ', '_')
         albumart_filepath = albumartfile.filename.replace(' ', '_')
@@ -198,9 +198,8 @@ def songdelete(id):
 
         try:
             song_metadata = db.execute(f"SELECT filepath, album_art FROM song WHERE id = {id}").fetchone()
-            os.remove(os.path.join(MP3_UPLOAD_FOLDER, song_metadata['filepath']))
+            os.remove(os.path.join(UPLOAD_FOLDER + '/musicfiles', song_metadata['filepath']))
             ## Don't remove the image file - album art can be shared by multiple songs
-            # os.remove(os.path.join(ALBUMART_UPLOAD_FOLDER, song_metadata['album_art']))
         except Exception as e:
             print(e)
 
