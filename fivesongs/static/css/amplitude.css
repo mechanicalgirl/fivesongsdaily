@@ -80,7 +80,6 @@ div#player * {
 .Ipod__wheel {
   flex: 1 1 0px;
   max-height: min-content;
-  display: flex;
   flex-direction: column;
 }
 
