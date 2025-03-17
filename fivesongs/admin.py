@@ -240,7 +240,7 @@ def playlistedit(id):
         db_playlist = db.execute(playlist_query).fetchone()
         song_query = f"SELECT id, artist, title, filepath, album_art FROM song WHERE playlist_id = {id} ORDER BY id ASC"
         db_songs = db.execute(song_query).fetchall()
-        all_songs = db.execute("SELECT id, artist, title, filepath, album_art FROM song ORDER BY id ASC").fetchall()
+        all_songs = db.execute("SELECT id, artist, title, filepath, album_art FROM song ORDER BY created_at DESC").fetchall()
         return render_template('admin/playlistedit.html', songs=db_songs, playlist=db_playlist, all_songs=all_songs)
 
 @bp.route('/admin/playlist/create', methods=('GET', 'POST'))
