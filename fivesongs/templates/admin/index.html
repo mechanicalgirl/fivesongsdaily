@@ -10,6 +10,7 @@
           <th scope="col">Id</th>
           <th scope="col">Title</th>
           <th scope="col">Artist</th>
+          <th scope="col">Created</th>
         </tr>
       </thead>
       <tbody>
@@ -18,6 +19,7 @@
           <th scope="row"><a href="/admin/song/{{ song.id }}">{{ song.id }}</a></th>
           <td>{{ song.title }}</td>
           <td>{{ song.artist }}</td>
+          <td>{{ song.created_at }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -36,6 +38,7 @@
           <th scope="col">Id</th>
           <th scope="col">Playlist Date</th>
           <th scope="col">Songs</th>
+          <th scope="col">Created</th>
           <th scope="col">Complete</th>
         </tr>
       </thead>
@@ -51,6 +54,7 @@
               {% endfor %}
             {% endif %}
           </td>
+          <td>{{ playlist.created_at }}</td>
           <td>
             {% if playlist.alert %}
               <span style="color: red;">&#x2714;</span>

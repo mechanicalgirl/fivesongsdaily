@@ -13,6 +13,7 @@
           <th scope="col">Title</th>
           <th scope="col">Artist</th>
           <th scope="col">Playlist</th>
+          <th scope="col">Created</th>
         </tr>
       </thead>
       <tbody>
@@ -22,6 +23,7 @@
           <td>{{ song.title }}</td>
           <td>{{ song.artist }}</td>
           <td><a href="/admin/playlist/{{ song.playlist_id }}">{{ song.playlist_id }}</a></td>
+          <td>{{ song.created_at }}</td>
         </tr>
         {% endfor %}
       </tbody>

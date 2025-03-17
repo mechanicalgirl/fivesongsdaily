@@ -22,7 +22,7 @@ def admin():
 
     db = get_db()
     song_query = """
-        SELECT id, artist, title
+        SELECT id, artist, title, created_at
         FROM song 
         ORDER BY id DESC
         LIMIT 10
@@ -41,6 +41,7 @@ def admin():
         playlist = {
             'id': p['id'],
             'play_date': p['play_date'],
+            'created_at': p['created_at'],
             'songs': [],
             'alert': False
         }
@@ -58,7 +59,7 @@ def songs():
     """ List all songs """
     db = get_db()
     song_query = """
-        SELECT id, artist, title, playlist_id
+        SELECT id, artist, title, playlist_id, created_at
         FROM song
         ORDER BY id DESC
     """
@@ -80,6 +81,7 @@ def playlists():
         playlist = {
             'id': p['id'],
             'play_date': p['play_date'],
+            'created_at': p['created_at'],
             'songs': []
         }
         p_songs = db.execute(f"SELECT title, artist FROM song WHERE playlist_id = {p['id']}").fetchall()
@@ -136,7 +138,6 @@ def songedit(id):
                         f"album_name='{form_data['album_name']}', "
                         f"{file_update} "
                         f"WHERE id = {id} RETURNING id;")
-        print(update_query)
         song_update = db.execute(update_query).fetchone()
         db.commit()
         return redirect('/admin/songs', 302)
@@ -169,13 +170,14 @@ def songcreate():
 
         song_filepath = songfile.filename.replace(' ', '_')
         albumart_filepath = albumartfile.filename.replace(' ', '_')
+        song_title = form_data['title'].replace("'", "''")
+        song_artist = form_data['artist'].replace("'", "''")
         try:
             insert_query = (f"INSERT INTO song (title, artist, duration, album_name, filepath, album_art) "
-                            f"VALUES('{form_data['title']}', '{form_data['artist']}', "
+                            f"VALUES('{song_title}', '{song_artist}', "
                             f"'{form_data['duration']}', '{form_data['album_name']}', "
                             f"'{song_filepath}', '{albumart_filepath}' ) "
                             f"RETURNING id;")
-            print(insert_query)
             db = get_db()
             song_update = db.execute(insert_query).fetchone()
             db.commit()
@@ -199,7 +201,7 @@ def songdelete(id):
         try:
             song_metadata = db.execute(f"SELECT filepath, album_art FROM song WHERE id = {id}").fetchone()
             os.remove(os.path.join(UPLOAD_FOLDER + '/musicfiles', song_metadata['filepath']))
-            ## Don't remove the image file - album art can be shared by multiple songs
+            os.remove(os.path.join(UPLOAD_FOLDER + '/albumart', song_metadata['album_art']))
         except Exception as e:
             print(e)
 
@@ -227,11 +229,14 @@ def playlistedit(id):
     """ Get and process the playlist edit form """
     db = get_db()
     if request.method == 'POST':
-        # TODO: validate so that the same group of songs cannot be on more than one playlist?
         form_data = request.form
         song_ids = [int(form_data[x]) for x in form_data]
+
+        clear_query = f"UPDATE song SET playlist_id = NULL WHERE playlist_id = {id} RETURNING NULL"
+        playlist_clear = db.execute(clear_query).fetchone()
+        db.commit()
+
         update_query = f"UPDATE song SET playlist_id = {id} WHERE id IN {tuple(song_ids)} RETURNING NULL"
-        print(update_query)
         playlist_update = db.execute(update_query).fetchone()
         db.commit()
         return redirect('/admin/playlists', 302)
@@ -248,16 +253,13 @@ def playlistedit(id):
 def playlistcreate():
     """ Get and process the playlist create form """
     if request.method == 'POST':
-        # TODO: validate so that the same group of songs cannot be on more than one playlist?
         form_data = request.form
         db = get_db()
         try:
             db = get_db()
             insert_query = f"INSERT INTO playlist (play_date) VALUES('{form_data['play_date']}') RETURNING id"
-            print(insert_query)
             playlist_create = db.execute(insert_query).fetchone()
             db.commit()
-            print(playlist_create['id'])
 
             playlist_id = playlist_create['id']
 
@@ -265,7 +267,6 @@ def playlistcreate():
             try:
                 song_ids = [int(form_data[x]) for x in form_data if x.startswith('song-id-')]
                 update_query = f"UPDATE song SET playlist_id = {playlist_id} WHERE id IN {tuple(song_ids)} RETURNING NULL"
-                print(update_query)
                 songs_update = db.execute(update_query).fetchone()
                 db.commit()
             except Exception as e:
@@ -279,7 +280,7 @@ def playlistcreate():
     else:
         # display an empty playlist form
         db = get_db()
-        all_songs = db.execute("SELECT id, artist, title, filepath, album_art FROM song ORDER BY id ASC").fetchall()
+        all_songs = db.execute("SELECT id, artist, title, filepath, album_art FROM song ORDER BY created_at DESC").fetchall()
         return render_template('admin/playlistcreate.html', all_songs=all_songs)
 
 @bp.route('/admin/playlist/delete/<int:id>', methods=["POST"])
