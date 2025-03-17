@@ -71,6 +71,7 @@ div#player * {
   transition-duration: 0.4s;
   border: 1px solid var(--gray);
   box-shadow: inset 0 0 10px 0.5px var(--box-shadow-color);
+  flex: 1 1 0px;
 }
 
 .Ipod:hover {
