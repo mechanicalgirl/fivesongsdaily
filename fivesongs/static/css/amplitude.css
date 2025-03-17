@@ -45,6 +45,7 @@ div#player {
 
   .Ipod {
     margin: 0 !important;
+    flex: 1 0 auto !important;
   }
 
   .Playlist {
