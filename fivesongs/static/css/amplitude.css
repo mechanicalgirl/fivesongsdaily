@@ -50,6 +50,7 @@ div#player {
 
   .Playlist {
     width: 95vw !important;
+    flex: 1 1 auto !important;
   }
 }
 
@@ -343,8 +344,6 @@ button.amplitude-playing {
   flex: 1 0 300px;
   border: 1px solid var(--gray);
   padding: 0;
-  /* padding: 1em 0; */
-  /* max-width: 400px; */
   font-family: 'Open Sans', sans-serif;
   min-width: min-content;
   overflow-x: hidden;
