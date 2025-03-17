@@ -346,7 +346,7 @@ button.amplitude-playing {
   /* max-width: 400px; */
   font-family: 'Open Sans', sans-serif;
   min-width: min-content;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .Song {
