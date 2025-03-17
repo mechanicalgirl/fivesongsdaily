@@ -121,6 +121,7 @@ div#player * {
   justify-content: space-between;
   flex: 0 1 0px;
   box-shadow: inset 0 0 1px 1px var(--box-shadow-color);
+  min-width: 0;
 }
 
 .Screen__title {
