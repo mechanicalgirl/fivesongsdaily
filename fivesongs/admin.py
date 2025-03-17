@@ -22,7 +22,7 @@ def admin():
 
     db = get_db()
     song_query = """
-        SELECT id, artist, title
+        SELECT id, artist, title, created_at
         FROM song 
         ORDER BY id DESC
         LIMIT 10
@@ -41,6 +41,7 @@ def admin():
         playlist = {
             'id': p['id'],
             'play_date': p['play_date'],
+            'created_at': p['created_at'],
             'songs': [],
             'alert': False
         }
@@ -58,7 +59,7 @@ def songs():
     """ List all songs """
     db = get_db()
     song_query = """
-        SELECT id, artist, title, playlist_id
+        SELECT id, artist, title, playlist_id, created_at
         FROM song
         ORDER BY id DESC
     """
@@ -80,6 +81,7 @@ def playlists():
         playlist = {
             'id': p['id'],
             'play_date': p['play_date'],
+            'created_at': p['created_at'],
             'songs': []
         }
         p_songs = db.execute(f"SELECT title, artist FROM song WHERE playlist_id = {p['id']}").fetchall()
@@ -199,7 +201,7 @@ def songdelete(id):
         try:
             song_metadata = db.execute(f"SELECT filepath, album_art FROM song WHERE id = {id}").fetchone()
             os.remove(os.path.join(UPLOAD_FOLDER + '/musicfiles', song_metadata['filepath']))
-            ## Don't remove the image file - album art can be shared by multiple songs
+            os.remove(os.path.join(UPLOAD_FOLDER + '/albumart', song_metadata['album_art']))
         except Exception as e:
             print(e)
 
@@ -278,7 +280,7 @@ def playlistcreate():
     else:
         # display an empty playlist form
         db = get_db()
-        all_songs = db.execute("SELECT id, artist, title, filepath, album_art FROM song ORDER BY id ASC").fetchall()
+        all_songs = db.execute("SELECT id, artist, title, filepath, album_art FROM song ORDER BY created_at DESC").fetchall()
         return render_template('admin/playlistcreate.html', all_songs=all_songs)
 
 @bp.route('/admin/playlist/delete/<int:id>', methods=["POST"])
