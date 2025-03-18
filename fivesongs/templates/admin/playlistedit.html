@@ -10,8 +10,9 @@
       <tbody>
         <tr>
           <th scope="row">Playlist Date</th>
-          <td>{{ playlist.play_date }} <!-- date cannot be edited --></td>
+          <td><input class="form-control" type="text" name="play_date" value="{{ playlist.play_date }}" /></td>
         </tr>
+
     {% if songs %}
       {% for song in songs %}
           <th scope="row" id="{{ song.index }}">Song {{ songs.index(song) }}</th>
@@ -24,13 +25,29 @@
                 {% endfor %}
               </select>
             </div>
-
           </td>
         </tr>
       {% endfor %}
-    {% else %}
-      <br />
     {% endif %}
+
+    {% if extra %}
+      {% for number in extra %}
+        {{ number }}
+          <th scope="row" id="{{ number }}">Song {{ number }}</th>
+          <td>
+            <div class="form-group">
+              <select class="form-control" name="song-id-{{ number }}">
+                <option value="" selected></option>
+                {% for s in all_songs %}
+                  <option value="{{ s.id }}">{{ s.title }} - {{ s.artist }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </td>
+        </tr>
+      {% endfor %}
+    {% endif %}
+
       </tbody>
     </table>
 

@@ -229,24 +229,37 @@ def playlistedit(id):
     """ Get and process the playlist edit form """
     db = get_db()
     if request.method == 'POST':
-        form_data = request.form
+        form_data = {**request.form}
+        play_date = form_data['play_date']
+        del form_data['play_date']
         song_ids = [int(form_data[x]) for x in form_data]
 
         clear_query = f"UPDATE song SET playlist_id = NULL WHERE playlist_id = {id} RETURNING NULL"
         playlist_clear = db.execute(clear_query).fetchone()
         db.commit()
 
-        update_query = f"UPDATE song SET playlist_id = {id} WHERE id IN {tuple(song_ids)} RETURNING NULL"
-        playlist_update = db.execute(update_query).fetchone()
+        song_update_query = f"UPDATE song SET playlist_id = {id} WHERE id IN {tuple(song_ids)} RETURNING NULL"
+        song_update = db.execute(song_update_query).fetchone()
         db.commit()
+
+        list_update_query = f"UPDATE playlist SET play_date = '{play_date}' WHERE id = {id} RETURNING NULL"
+        playlist_update = db.execute(list_update_query).fetchone()
+        db.commit()
+
         return redirect('/admin/playlists', 302)
     else:
         playlist_query = f"SELECT id, play_date, created_at FROM playlist WHERE id = {id}"
         db_playlist = db.execute(playlist_query).fetchone()
+
         song_query = f"SELECT id, artist, title, filepath, album_art FROM song WHERE playlist_id = {id} ORDER BY id ASC"
         db_songs = db.execute(song_query).fetchall()
+
+        n = 5-len(db_songs)
+        extra = [x + len(db_songs) for x in list(range(n))]
+
         all_songs = db.execute("SELECT id, artist, title, filepath, album_art FROM song ORDER BY created_at DESC").fetchall()
-        return render_template('admin/playlistedit.html', songs=db_songs, playlist=db_playlist, all_songs=all_songs)
+
+        return render_template('admin/playlistedit.html', songs=db_songs, playlist=db_playlist, all_songs=all_songs, extra=extra)
 
 @bp.route('/admin/playlist/create', methods=('GET', 'POST'))
 @login_required
