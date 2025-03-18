@@ -14,14 +14,27 @@
         <tr>
           <th scope="row">Songs</th>
           <td>
-            {% if songs %}
-              {% for song in songs %}
-                {{ song.title }} - {{ song.artist }}<br />
-                <audio controls>
-                  <source src="/static/musicfiles/{{ song.filepath }}" type="audio/mp3">
-                </audio><br /><br />
-              {% endfor %}
-            {% endif %}
+            <table class="table">
+              <tbody>
+                {% if songs %}
+                  {% for song in songs %}
+                    <tr>
+                      <td>
+                        {{ song.title }} - {{ song.artist }}<br />
+                        <audio controls>
+                          <source src="/static/musicfiles/{{ song.filepath }}" type="audio/mp3">
+                        </audio><br />
+                        /static/musicfiles/{{ song.filepath }}<br />
+                      </td>
+                      <td>                      
+                        <img src="/static/albumart/{{ song.album_art }}" height=100 width=100><br />
+                        /static/albumart/{{ song.album_art }}<br />
+                      </td>
+                    </tr>
+                  {% endfor %}
+                {% endif %}
+              </tbody>
+            </table>
           </td>
         </tr>
         <tr>
