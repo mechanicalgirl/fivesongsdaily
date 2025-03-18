@@ -180,12 +180,11 @@ def songcreate():
                             f"RETURNING id;")
             db = get_db()
             song_update = db.execute(insert_query).fetchone()
+            song_id = song_update['id']
             db.commit()
+            return redirect(f"/admin/song/{song_id}", 302)
         except Exception as e:
             return render_template('admin/songerror.html', error=e)
-        
-        # return to /admin/song/{new song id}
-        return redirect('/admin/songs', 302)
     else:
         # display an empty song form
         return render_template('admin/songcreate.html')
