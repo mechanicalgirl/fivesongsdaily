@@ -167,15 +167,18 @@ def songcreate():
         if albumartfile and allowed_file('albumart', albumartfile.filename):
             filename = secure_filename(albumartfile.filename)
             albumartfile.save(os.path.join(UPLOAD_FOLDER + '/albumart', filename))
+            albumart_filepath = albumartfile.filename.replace(' ', '_')
+        else:
+            albumart_filepath = 'album_default.jpg'
 
         song_filepath = songfile.filename.replace(' ', '_')
-        albumart_filepath = albumartfile.filename.replace(' ', '_')
         song_title = form_data['title'].replace("'", "''")
         song_artist = form_data['artist'].replace("'", "''")
+        album_name = form_data['album_name'].replace("'", "''")
         try:
             insert_query = (f"INSERT INTO song (title, artist, duration, album_name, filepath, album_art) "
                             f"VALUES('{song_title}', '{song_artist}', "
-                            f"'{form_data['duration']}', '{form_data['album_name']}', "
+                            f"'{form_data['duration']}', '{album_name}', "
                             f"'{song_filepath}', '{albumart_filepath}' ) "
                             f"RETURNING id;")
             db = get_db()
