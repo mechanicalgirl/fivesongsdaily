@@ -134,10 +134,14 @@ def songedit(id):
             albumartfile.save(os.path.join(UPLOAD_FOLDER + '/albumart', filename))
             file_update = file_update + f"album_art = '{albumartfile.filename}' "
 
-        update_query = (f"UPDATE song SET title='{form_data['title']}', "
-                        f"artist='{form_data['artist']}', "
+        song_title = form_data['title'].replace("'", "''")
+        song_artist = form_data['artist'].replace("'", "''")
+        album_name = form_data['album_name'].replace("'", "''")
+
+        update_query = (f"UPDATE song SET title='{song_title}', "
+                        f"artist='{song_artist}', "
                         f"duration='{form_data['duration']}', "
-                        f"album_name='{form_data['album_name']}', "
+                        f"album_name='{album_name}', "
                         f"{file_update} "
                         f"WHERE id = {id} RETURNING id;")
         song_update = db.execute(update_query).fetchone()
@@ -258,6 +262,7 @@ def playlistedit(id):
             song = f"{s['artist']} - {s['title']}"
             songs.append(song)
         song_list = "<br />".join(map(str, songs))
+        song_list = song_list.replace("'", "''")
 
         playlist_update_query = f"UPDATE playlist SET song_list = '{song_list}' WHERE id = {playlist_id} RETURNING NULL"
         playlist_update = db.execute(playlist_update_query).fetchone()
@@ -312,6 +317,7 @@ def playlistcreate():
                     song = f"{s['artist']} - {s['title']}"
                     songs.append(song)
                 song_list = "<br />".join(map(str, songs))
+                song_list = song_list.replace("'", "''")
 
                 playlist_update_query = f"UPDATE playlist SET song_list = '{song_list}' WHERE id = {playlist_id} RETURNING NULL"
                 playlist_update = db.execute(playlist_update_query).fetchone()
