@@ -219,7 +219,7 @@ def songdelete(id):
 def playlist(id):
     """ Display all metadata for a single playlist; link to edit page """
     db = get_db()
-    playlist_query = f"SELECT id, play_date, created_at FROM playlist WHERE id = {id}"
+    playlist_query = f"SELECT id, play_date, created_at, song_list FROM playlist WHERE id = {id}"
     db_playlist = db.execute(playlist_query).fetchone()
     song_query = f"SELECT id, artist, title, filepath, album_art FROM song WHERE playlist_id = {id} ORDER BY id ASC"
     db_songs = db.execute(song_query).fetchall()
@@ -235,6 +235,7 @@ def playlistedit(id):
         play_date = form_data['play_date']
         del form_data['play_date']
         song_ids = [int(form_data[x]) for x in form_data]
+        playlist_id = id
 
         clear_query = f"UPDATE song SET playlist_id = NULL WHERE playlist_id = {id} RETURNING NULL"
         playlist_clear = db.execute(clear_query).fetchone()
@@ -248,7 +249,19 @@ def playlistedit(id):
         playlist_update = db.execute(list_update_query).fetchone()
         db.commit()
 
-        return redirect('/admin/playlists', 302)
+        songs = []
+        song_list_query = f"SELECT artist, title FROM song WHERE id IN {tuple(song_ids)}"
+        song_list_update = db.execute(song_list_query).fetchall()
+        for s in song_list_update:
+            song = f"{s['artist']} - {s['title']}"
+            songs.append(song)
+        song_list = "<br />".join(map(str, songs))
+
+        playlist_update_query = f"UPDATE playlist SET song_list = '{song_list}' WHERE id = {playlist_id} RETURNING NULL"
+        playlist_update = db.execute(playlist_update_query).fetchone()
+        db.commit()
+
+        return redirect(f"/admin/playlist/{id}", 302)
     else:
         playlist_query = f"SELECT id, play_date, created_at FROM playlist WHERE id = {id}"
         db_playlist = db.execute(playlist_query).fetchone()
@@ -285,7 +298,26 @@ def playlistcreate():
                 songs_update = db.execute(update_query).fetchone()
                 db.commit()
             except Exception as e:
-                print(e)  # find a more elegant way to handle the error (a playlist created without adding any songs)
+                print("SONGS UPDATE", e)
+                ## This will hit if there are fewer then five songs: invalid literal for int() with base 10: ''
+
+            # also update the playlist with the new song_list
+            try:
+                songs = []
+                song_list_query = f"SELECT artist, title FROM song WHERE id IN {tuple(song_ids)}"
+                song_list_update = db.execute(song_list_query).fetchall()
+                for s in song_list_update:
+                    song = f"{s['artist']} - {s['title']}"
+                    songs.append(song)
+                song_list = "<br />".join(map(str, songs))
+
+                playlist_update_query = f"UPDATE playlist SET song_list = '{song_list}' WHERE id = {playlist_id} RETURNING NULL"
+                playlist_update = db.execute(playlist_update_query).fetchone()
+                db.commit()
+            except Exception as e:
+                print("SONG LIST UPDATE", e)
+                ## If the previous block errors, we also get this: local variable 'song_ids' referenced before assignment
+
             return redirect(f"/admin/playlist/{playlist_id}", 302)
 
         except Exception as e:

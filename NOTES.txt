@@ -14,7 +14,7 @@ http://127.0.0.1:1024
 
 ============================================
 
-# run once - initialize the db
+# initialize the db
 flask --app fivesongs init-db
 
 $ sqlite3 instance/fivesongs.sqlite3

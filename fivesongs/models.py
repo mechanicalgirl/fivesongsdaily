@@ -24,4 +24,5 @@ class Playlist(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     play_date = db.Column(db.Date)
     created_at = db.Column(db.Date, default=str(date.today()))
+    song_list = db.Column(db.String, nullable=True)
 

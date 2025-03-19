@@ -11,7 +11,8 @@ CREATE TABLE user (
 CREATE TABLE playlist (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     play_date DATE NOT NULL UNIQUE,
-    created_at DATE NOT NULL DEFAULT CURRENT_DATE
+    created_at DATE NOT NULL DEFAULT CURRENT_DATE,
+    song_list TEXT
 );
 
 CREATE TABLE song (
@@ -27,7 +28,7 @@ CREATE TABLE song (
     FOREIGN KEY(playlist_id) REFERENCES playlist(id)
 );
 
-INSERT INTO playlist (play_date) VALUES (CURRENT_DATE);
+INSERT INTO playlist (play_date, song_list) VALUES (CURRENT_DATE, 'Natasha Blume - Black Sea<br />Poxy Boggards - Nelly the Mermaid<br />This Mortal Coil - Song to the Siren<br />The Blixunami - Splish Splash on Em<br />Esthero - Black Mermaid');
 
 INSERT INTO song (artist, title, filepath, duration, album_name, album_art, playlist_id) VALUES ('Natasha Blume', 'Black Sea', 'BlackSea-NatashaBlume.mp3', '4:13', 'Natasha Blume', 'BlackSea-NatashaBlume.jpg', 1);
 INSERT INTO song (artist, title, filepath, duration, album_name, album_art, playlist_id) VALUES ('Poxy Boggards', 'Nelly the Mermaid', 'NellytheMermaid-PoxyBoggards.mp3', '3:13', 'Anchor Management', 'NellytheMermaid-PoxyBoggards.jpg', 1);
