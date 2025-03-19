@@ -21,17 +21,11 @@
         <tr>
           <th scope="row"><a href="/admin/playlist/{{ playlist.id }}">{{ playlist.id }}</a></th>
           <td>{{ playlist.play_date }}</td>
-          <td>
-            {% if playlist.songs %}
-              {% for song in playlist.songs %}
-                {{ song }}<br />
-              {% endfor %}
-            {% endif %}
-          </td>
+          <td>{{ playlist.song_list|safe }}</td>
           <td>{{ playlist.created_at }}</td>
           <td>
             {% if playlist.alert %}
-              <span style="color: red;">&#x2714;</span>
+              <span style="color: red;">&cross;</span>
             {% else %}
               <span style="color: green;">&#x2714;</span>
             {% endif %}

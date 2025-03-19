@@ -30,7 +30,7 @@ def admin():
     db_songs = db.execute(song_query).fetchall()
 
     playlist_query = """
-        SELECT id, play_date, created_at
+        SELECT id, play_date, song_list, created_at
         FROM playlist
         ORDER BY play_date DESC
         LIMIT 10
@@ -43,6 +43,7 @@ def admin():
             'play_date': p['play_date'],
             'created_at': p['created_at'],
             'songs': [],
+            'song_list': p['song_list'],
             'alert': False
         }
         p_songs = db.execute(f"SELECT title, artist FROM song WHERE playlist_id = {p['id']}").fetchall()
@@ -71,7 +72,7 @@ def songs():
 def playlists():
     db = get_db()
     playlist_query = """
-        SELECT id, play_date, created_at
+        SELECT id, play_date, created_at, song_list
         FROM playlist
         ORDER BY play_date DESC
     """
@@ -82,6 +83,7 @@ def playlists():
             'id': p['id'],
             'play_date': p['play_date'],
             'created_at': p['created_at'],
+            'song_list': p['song_list'],
             'songs': []
         }
         p_songs = db.execute(f"SELECT title, artist FROM song WHERE playlist_id = {p['id']}").fetchall()
