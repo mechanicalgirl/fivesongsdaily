@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div>
+
+    {% if playlists %}
+
+      {% for playlist in playlists %}
+
+        <p>
+          <strong>{{ playlist.play_date }}</strong><br />
+          {{ playlist.song_list|safe }}<br />
+        </p>
+
+      {% endfor %}
+
+    {% endif %}
+
+  </div>
+
+  <p style="margin: 25px 0px 25px 0px;">
+    {% if pagination %}
+      <ul class="pagination">
+        {% for page_number in pagination %}
+          <li class="page-item"><a class="page-link" href="/pages/{{ page_number }}/">{{ page_number }}</a></li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </p>
+
+{% endblock %}

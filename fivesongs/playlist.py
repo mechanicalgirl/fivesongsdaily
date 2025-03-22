@@ -1,4 +1,5 @@
 from datetime import datetime
+import math
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
@@ -47,6 +48,30 @@ def index():
         js_songs.append(js_song)
 
     return render_template('playlist/index.html', songs=db_songs, play_date=play_date, js_songs=js_songs)
-    return render_template(
-        'playlist/index.html',
-        songs=db_songs, play_date=play_date, js_songs=json.dumps(js_songs))
+
+def pagination():
+    db = get_db()
+    post_count = db.execute("SELECT count(*) AS count FROM playlist WHERE play_date < current_date;").fetchone()
+    total = math.ceil(post_count['count']/3)
+    page_list = [int(a) for a in range(1, total+1, 1)]
+    return page_list
+
+@bp.route('/playlists')
+def playlists():
+    page_list = pagination()
+    db = get_db()
+    playlist_query = "SELECT id, play_date, song_list FROM playlist WHERE play_date < current_date ORDER BY play_date DESC LIMIT 3"
+    playlists = db.execute(playlist_query).fetchall()
+    return render_template('playlist/playlists.html', playlists=playlists, pagination=page_list)
+
+@bp.route('/pages/<page_number>/')
+def pages(page_number):
+    page_list = pagination()
+    db = get_db()
+    total = len(page_list) * 3
+    ids = total - ((int(page_number) * 3) - 3)
+    page_query = f"SELECT id, play_date, song_list FROM playlist WHERE id <= {ids} AND play_date < current_date ORDER BY play_date DESC LIMIT 3"
+    print("PAGE QUERY", page_query)
+    playlists = db.execute(page_query).fetchall()
+    return render_template('playlist/playlists.html', playlists=playlists, pagination=page_list)
+
