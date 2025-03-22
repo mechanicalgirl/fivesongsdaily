@@ -1,5 +1,6 @@
 .DS_Store
 instance/fivesongs.sqlite3
+uberspace_notes.txt
 
 *.bak
 venv
