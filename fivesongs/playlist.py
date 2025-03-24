@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, url_for
@@ -47,6 +48,17 @@ def index():
         js_songs.append(js_song)
 
     return render_template('playlist/index.html', songs=db_songs, play_date=play_date, js_songs=js_songs)
-    return render_template(
-        'playlist/index.html',
-        songs=db_songs, play_date=play_date, js_songs=json.dumps(js_songs))
+
+@bp.route('/today')
+def today():
+    """ Simple API endpoint for media posting """
+    db = get_db()
+    playlist = db.execute("SELECT play_date, song_list FROM playlist WHERE play_date = current_date").fetchone()
+
+    song_list = playlist['song_list'].split('<br />')
+    play = {
+        'playlist_date': str(playlist['play_date']),
+        'playlist_songs': song_list
+    }
+    output = json.loads(json.dumps(play))
+    return output
