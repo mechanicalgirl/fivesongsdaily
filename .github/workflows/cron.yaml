@@ -1,7 +1,6 @@
 name: Mastodon Post
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: "15 0 * * *"
 
