@@ -37,6 +37,7 @@
         <tr>
           <th scope="col">Id</th>
           <th scope="col">Playlist Date</th>
+          <th scope="col">Theme</th>
           <th scope="col">Songs</th>
           <th scope="col">Created</th>
           <th scope="col">Complete</th>
@@ -47,6 +48,7 @@
         <tr>
           <th scope="row"><a href="/admin/playlist/{{ playlist.id }}">{{ playlist.id }}</a></th>
           <td>{{ playlist.play_date }}</td>
+          <td>{{ playlist.theme }}</td>
           <td>{{ playlist.song_list|safe }}</td>
           <td>{{ playlist.created_at }}</td>
           <td>

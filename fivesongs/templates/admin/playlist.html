@@ -12,6 +12,10 @@
           <td>{{ playlist.play_date }}</td>
         </tr>
         <tr>
+          <th scope="row">Theme</th>
+          <td>{{ playlist.theme }}</td>
+        </tr>
+        <tr>
           <th scope="row">Songs</th>
           <td>
             <table class="table">
@@ -55,10 +59,6 @@
     </form>
 
     <br />
-
-  {% else %}
-
-    No playlist - how did you get here?
 
   {% endif %}
 

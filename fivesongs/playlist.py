@@ -25,8 +25,9 @@ def index():
     db_songs = db.execute(song_query).fetchall()
 
     if db_songs:
-        play_date = db.execute("SELECT play_date FROM playlist WHERE play_date = current_date").fetchone()
-        play_date = play_date['play_date']
+        playlist = db.execute("SELECT play_date, theme FROM playlist WHERE play_date = current_date").fetchone()
+        play_date = playlist['play_date']
+        theme = playlist['theme']
     else:
         song_query = """
             SELECT id, artist, title, filepath, duration, album_name, album_art
@@ -36,6 +37,7 @@ def index():
         """
         db_songs = db.execute(song_query).fetchall()
         play_date = datetime.today().date()
+        theme = 'Mermaids'
 
     js_songs = []
     for song in db_songs:
@@ -48,7 +50,7 @@ def index():
         }
         js_songs.append(js_song)
 
-    return render_template('playlist/index.html', songs=db_songs, play_date=play_date, js_songs=js_songs)
+    return render_template('playlist/index.html', songs=db_songs, play_date=play_date, theme=theme, js_songs=js_songs)
 
 @bp.route('/today')
 def today():

@@ -12,6 +12,10 @@
           <th scope="row">Playlist Date</th>
           <td><input class="form-control" type="text" name="play_date" value="{{ playlist.play_date }}" /></td>
         </tr>
+        <tr>
+          <th scope="row">Theme</th>
+          <td><input class="form-control" type="text" name="theme" value="{{ playlist.theme }}" /></td>
+        </tr>
 
     {% if songs %}
       {% for song in songs %}

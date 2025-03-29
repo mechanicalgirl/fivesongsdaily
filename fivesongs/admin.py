@@ -30,7 +30,7 @@ def admin():
     db_songs = db.execute(song_query).fetchall()
 
     playlist_query = """
-        SELECT id, play_date, song_list, created_at
+        SELECT id, play_date, song_list, created_at, theme
         FROM playlist
         ORDER BY play_date DESC
         LIMIT 10
@@ -44,6 +44,7 @@ def admin():
             'created_at': p['created_at'],
             'songs': [],
             'song_list': p['song_list'],
+            'theme': p['theme'],
             'alert': False
         }
         p_songs = db.execute(f"SELECT title, artist FROM song WHERE playlist_id = {p['id']}").fetchall()
@@ -72,7 +73,7 @@ def songs():
 def playlists():
     db = get_db()
     playlist_query = """
-        SELECT id, play_date, created_at, song_list
+        SELECT id, play_date, created_at, song_list, theme
         FROM playlist
         ORDER BY play_date DESC
     """
@@ -84,6 +85,7 @@ def playlists():
             'play_date': p['play_date'],
             'created_at': p['created_at'],
             'song_list': p['song_list'],
+            'theme': p['theme'],
             'songs': []
         }
         p_songs = db.execute(f"SELECT title, artist FROM song WHERE playlist_id = {p['id']}").fetchall()
@@ -225,7 +227,7 @@ def songdelete(id):
 def playlist(id):
     """ Display all metadata for a single playlist; link to edit page """
     db = get_db()
-    playlist_query = f"SELECT id, play_date, created_at, song_list FROM playlist WHERE id = {id}"
+    playlist_query = f"SELECT id, play_date, created_at, song_list, theme FROM playlist WHERE id = {id}"
     db_playlist = db.execute(playlist_query).fetchone()
     song_query = f"SELECT id, artist, title, filepath, album_art FROM song WHERE playlist_id = {id} ORDER BY id ASC"
     db_songs = db.execute(song_query).fetchall()
@@ -239,7 +241,9 @@ def playlistedit(id):
     if request.method == 'POST':
         form_data = {**request.form}
         play_date = form_data['play_date']
+        theme = form_data['theme']
         del form_data['play_date']
+        del form_data['theme']
         song_ids = [int(form_data[x]) for x in form_data]
         playlist_id = id
 
@@ -264,13 +268,13 @@ def playlistedit(id):
         song_list = "<br />".join(map(str, songs))
         song_list = song_list.replace("'", "''")
 
-        playlist_update_query = f"UPDATE playlist SET song_list = '{song_list}' WHERE id = {playlist_id} RETURNING NULL"
+        playlist_update_query = f"UPDATE playlist SET song_list = '{song_list}', theme = '{theme}' WHERE id = {playlist_id} RETURNING NULL"
         playlist_update = db.execute(playlist_update_query).fetchone()
         db.commit()
 
         return redirect(f"/admin/playlist/{id}", 302)
     else:
-        playlist_query = f"SELECT id, play_date, created_at FROM playlist WHERE id = {id}"
+        playlist_query = f"SELECT id, play_date, created_at, theme FROM playlist WHERE id = {id}"
         db_playlist = db.execute(playlist_query).fetchone()
 
         song_query = f"SELECT id, artist, title, filepath, album_art FROM song WHERE playlist_id = {id} ORDER BY id ASC"
@@ -290,8 +294,8 @@ def playlistcreate():
     if request.method == 'POST':
         form_data = request.form
         db = get_db()
+        theme = form_data['theme']
         try:
-            db = get_db()
             insert_query = f"INSERT INTO playlist (play_date) VALUES('{form_data['play_date']}') RETURNING id"
             playlist_create = db.execute(insert_query).fetchone()
             db.commit()
@@ -319,7 +323,7 @@ def playlistcreate():
                 song_list = "<br />".join(map(str, songs))
                 song_list = song_list.replace("'", "''")
 
-                playlist_update_query = f"UPDATE playlist SET song_list = '{song_list}' WHERE id = {playlist_id} RETURNING NULL"
+                playlist_update_query = f"UPDATE playlist SET song_list = '{song_list}', theme = '{theme}' WHERE id = {playlist_id} RETURNING NULL"
                 playlist_update = db.execute(playlist_update_query).fetchone()
                 db.commit()
             except Exception as e:
