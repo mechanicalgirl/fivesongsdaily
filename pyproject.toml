@@ -4,6 +4,7 @@ version = "1.0.0"
 description = "Daily five song playlist"
 dependencies = [
     "click==8.1.8",
+    "feedgen==1.0.0",
     "Flask==3.0.3",
     "Flask-Admin==1.6.1",
     "Flask-SQLAlchemy==3.1.1",

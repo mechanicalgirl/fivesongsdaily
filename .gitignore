@@ -2,6 +2,8 @@
 instance/fivesongs.sqlite3
 instance
 uberspace_notes.txt
+mastodon_notes.txt 
+rss.xml
 
 *.bak
 venv
