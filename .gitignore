@@ -5,6 +5,8 @@ uberspace_notes.txt
 mastodon_notes.txt 
 rss.xml
 
+scripts/song_upload.py
+
 *.bak
 venv
 *.swp

@@ -12,7 +12,8 @@ CREATE TABLE playlist (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     play_date DATE NOT NULL UNIQUE,
     created_at DATE NOT NULL DEFAULT CURRENT_DATE,
-    song_list TEXT
+    song_list TEXT,
+    theme TEXT
 );
 
 CREATE TABLE song (

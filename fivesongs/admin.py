@@ -1,8 +1,9 @@
+import json
 import os
 import sys
 
 from flask import (
-    Blueprint, current_app, g, redirect, render_template, request, url_for
+    Blueprint, current_app, g, redirect, render_template, request, Response, url_for
 )
 from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
@@ -357,3 +358,63 @@ def playlistdelete(id):
         return redirect('/admin/playlists', 302)
     else:
         return redirect('/admin/playlists', 302)
+
+
+@bp.route('/api/song/create', methods=["POST"])
+def song_endpoint():
+    """ Process incoming song uploads """
+    # https://flask.palletsprojects.com/en/stable/patterns/fileuploads/
+
+    # require an auth header value to be passed
+    # create an example curl call
+    # return a json object
+
+    if request.method == 'POST':
+        # look for request.headers.get('Flask-Key')
+        db = get_db()
+        pwd = db.execute("SELECT password FROM user WHERE username = 'bshaurette'").fetchone()
+        key = pwd['password'].split('$')[-1]
+        if not request.headers['Flask-Key'] == key:
+            return Response("Not Authorized"), 401
+
+        form_data = request.form
+        songfile = request.files['filepath']
+        albumartfile = request.files['album_art']
+
+        if songfile and allowed_file('song', songfile.filename):
+            filename = secure_filename(songfile.filename)
+            songfile.save(os.path.join(UPLOAD_FOLDER + '/musicfiles', filename))
+        
+        if albumartfile and allowed_file('albumart', albumartfile.filename):
+            filename = secure_filename(albumartfile.filename)
+            albumartfile.save(os.path.join(UPLOAD_FOLDER + '/albumart', filename))
+            albumart_filepath = albumartfile.filename.replace(' ', '_')
+        else:
+            albumart_filepath = 'album_default.jpg'
+            
+        song_filepath = songfile.filename.replace(' ', '_')
+        song_title = form_data['title'].replace("'", "''")
+        song_artist = form_data['artist'].replace("'", "''")
+        album_name = form_data['album_name'].replace("'", "''")
+        try:
+            insert_query = (f"INSERT INTO song (title, artist, duration, album_name, filepath, album_art) "
+                            f"VALUES('{song_title}', '{song_artist}', "
+                            f"'{form_data['duration']}', '{album_name}', "
+                            f"'{song_filepath}', '{albumart_filepath}' ) "
+                            f"RETURNING id;")
+            song_update = db.execute(insert_query).fetchone()
+            song_id = song_update['id']
+            db.commit()
+            song_object = {
+                'title': song_title,
+                'artist': song_artist,
+                'duration': form_data['duration'],
+                'album_name': album_name,
+                'filepath': song_filepath,
+                'album_art': albumart_filepath,
+                'song_id': song_id,
+                'url': f"https://fivesongsdaily.com/admin/song/{song_id}"
+            }
+            return Response(json.dumps(song_object)), 200
+        except Exception as e:
+            return Response(e), 200
