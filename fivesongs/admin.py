@@ -363,12 +363,6 @@ def playlistdelete(id):
 @bp.route('/api/song/create', methods=["POST"])
 def song_endpoint():
     """ Process incoming song uploads """
-    # https://flask.palletsprojects.com/en/stable/patterns/fileuploads/
-
-    # require an auth header value to be passed
-    # create an example curl call
-    # return a json object
-
     if request.method == 'POST':
         # look for request.headers.get('Flask-Key')
         db = get_db()
