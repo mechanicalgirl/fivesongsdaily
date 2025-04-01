@@ -4,6 +4,7 @@ Flask==3.0.3
 Flask-Admin==1.6.1
 Flask-SQLAlchemy==3.1.1
 gunicorn>=23.0.0
+pillow==11.1.0
 requests==2.32.3
 SQLAlchemy==2.0.38
 uWSGI==2.0.28

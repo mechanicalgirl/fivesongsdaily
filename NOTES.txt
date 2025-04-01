@@ -34,9 +34,6 @@ sqlite> pragma table_info('playlist');
 pragma index_list('playlist');
 .schema playlist
 
-
-UPDATE playlist SET play_date = CURRENT_DATE;
-
 ==============================================
 
 build and deploy notes:
