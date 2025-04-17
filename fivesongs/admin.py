@@ -1,4 +1,5 @@
 import json
+import math
 import os
 import sys
 
@@ -16,6 +17,13 @@ MP3_ALLOWED_EXTENSIONS = {'mp3'}
 ALBUMART_ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 bp = Blueprint('admin', __name__)
+
+def pagination():
+    db = get_db()
+    post_count = db.execute("SELECT count(*) AS count FROM playlist;").fetchone()
+    total = math.ceil(post_count['count']/20)
+    page_list = [int(a) for a in range(1, total+1, 1)]
+    return page_list
 
 @bp.route('/admin')
 @login_required
@@ -72,11 +80,14 @@ def songs():
 @bp.route('/admin/playlists')
 @login_required
 def playlists():
+    page_list = pagination()
     db = get_db()
+
     playlist_query = """
         SELECT id, play_date, created_at, song_list, theme
         FROM playlist
         ORDER BY play_date DESC
+        LIMIT 20
     """
     db_playlists = db.execute(playlist_query).fetchall()
     all_playlists = []
@@ -95,7 +106,36 @@ def playlists():
         if len(playlist['songs']) < 5:
             playlist['alert'] = True
         all_playlists.append(playlist)
-    return render_template('admin/playlists.html', playlists=all_playlists)
+    return render_template('admin/playlists.html', playlists=all_playlists, pagination=page_list)
+
+@bp.route('/admin/playlists/pages/<page_number>')
+def pages(page_number):
+    page_list = pagination()
+    db = get_db()
+    
+    total = len(page_list) * 20
+    ids = total - ((int(page_number) * 20) - 20)
+    lower_ids = int(ids-20)
+
+    playlist_query = f"SELECT id, play_date, created_at, song_list, theme FROM playlist WHERE id > {lower_ids} AND id <= {ids} ORDER BY play_date DESC"
+    db_playlists = db.execute(playlist_query).fetchall()
+    all_playlists = []
+    for p in db_playlists:
+        playlist = {
+            'id': p['id'],
+            'play_date': p['play_date'],
+            'created_at': p['created_at'],
+            'song_list': p['song_list'],
+            'theme': p['theme'],
+            'songs': []
+        }
+        p_songs = db.execute(f"SELECT title, artist FROM song WHERE playlist_id = {p['id']}").fetchall()
+        for s in p_songs:
+            playlist['songs'].append(f"{s['title']} - {s['artist']}")
+        if len(playlist['songs']) < 5:
+            playlist['alert'] = True
+        all_playlists.append(playlist)
+    return render_template('admin/playlists.html', playlists=all_playlists, pagination=page_list)
 
 @bp.route('/admin/song/<int:id>')
 @login_required
@@ -340,7 +380,7 @@ def playlistcreate():
     else:
         # display an empty playlist form
         db = get_db()
-        all_songs = db.execute("SELECT id, artist, title, filepath, album_art FROM song ORDER BY created_at DESC").fetchall()
+        all_songs = db.execute("SELECT id, artist, title, filepath, album_art FROM song ORDER BY id DESC").fetchall()
         return render_template('admin/playlistcreate.html', all_songs=all_songs)
 
 @bp.route('/admin/playlist/delete/<int:id>', methods=["POST"])

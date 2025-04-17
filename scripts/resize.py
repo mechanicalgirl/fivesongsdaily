@@ -1,4 +1,4 @@
-# python3 resize.py /path/to/original/images/
+# python3 resize.py /path/to/original/images
 
 import os
 from os import listdir
@@ -7,7 +7,7 @@ import sys
 
 from PIL import Image
 
-inpath = sys.argv[1]
+inpath = sys.argv[1] + '/'
 
 onlyfiles = [f for f in listdir(inpath) if isfile(join(inpath, f)) and f.endswith(".jpg")]
 outfiles = []
