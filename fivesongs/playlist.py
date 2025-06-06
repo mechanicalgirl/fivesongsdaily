@@ -56,12 +56,14 @@ def index():
 def today():
     """ Simple API endpoint for media posting """
     db = get_db()
-    playlist = db.execute("SELECT play_date, song_list FROM playlist WHERE play_date = current_date").fetchone()
-
+    playlist = db.execute("SELECT play_date, song_list, theme FROM playlist WHERE play_date = current_date").fetchone()
+    if not playlist:
+        playlist = db.execute("SELECT play_date, song_list, theme FROM playlist WHERE id = 1").fetchone()
     song_list = playlist['song_list'].split('<br />')
     play = {
         'playlist_date': str(playlist['play_date']),
-        'playlist_songs': song_list
+        'playlist_songs': song_list,
+        'playlist_theme': playlist['theme']
     }
     output = json.loads(json.dumps(play))
     return output

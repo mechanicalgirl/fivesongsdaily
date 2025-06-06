@@ -4,6 +4,7 @@ instance
 uberspace_notes.txt
 mastodon_notes.txt 
 rss.xml
+uv.lock
 
 scripts/song_upload.py
 

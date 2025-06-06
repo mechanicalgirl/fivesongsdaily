@@ -9,7 +9,7 @@ token = sys.argv[2]
 url = 'https://fivesongsdaily.com/today'
 api = requests.get(url)
 json_response = api.json()
-text = "Today's Playlist:" + '\n\r' + '\n'.join(json_response['playlist_songs'])
+text = "Today's Playlist:" + '\n\r' + json_response['playlist_theme'] + ' - ' + json_response['playlist_date']  + '\n\r' + '\n'.join(json_response['playlist_songs'])
 text += '\n\r' + 'https://www.fivesongsdaily.com'
 
 url = f"https://{server}/api/v1/statuses"
