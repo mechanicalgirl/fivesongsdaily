@@ -23,6 +23,7 @@ def pagination():
     post_count = db.execute("SELECT count(*) AS count FROM playlist;").fetchone()
     total = math.ceil(post_count['count']/20)
     page_list = [int(a) for a in range(1, total+1, 1)]
+    # PAGE LIST [1, 2, 3]
     return page_list
 
 @bp.route('/admin')
@@ -80,6 +81,7 @@ def songs():
 @bp.route('/admin/playlists')
 @login_required
 def playlists():
+    # all playlists, first page
     page_list = pagination()
     db = get_db()
 
@@ -110,14 +112,15 @@ def playlists():
 
 @bp.route('/admin/playlists/pages/<page_number>')
 def pages(page_number):
+    # all playlists, paginated
     page_list = pagination()
     db = get_db()
     
-    total = len(page_list) * 20
-    ids = total - ((int(page_number) * 20) - 20)
-    lower_ids = int(ids-20)
+    limit = 20
+    offset = ((int(page_number)-1) * 20)
+    print(page_number, limit, offset)
 
-    playlist_query = f"SELECT id, play_date, created_at, song_list, theme FROM playlist WHERE id > {lower_ids} AND id <= {ids} ORDER BY play_date DESC"
+    playlist_query = f"SELECT id, play_date, created_at, song_list, theme FROM playlist ORDER BY play_date DESC LIMIT {limit} OFFSET {offset}"
     db_playlists = db.execute(playlist_query).fetchall()
     all_playlists = []
     for p in db_playlists:
