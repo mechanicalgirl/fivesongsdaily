@@ -1,0 +1,38 @@
+{% extends 'adminbase.html' %}
+
+{% block content %}
+
+  {% if playlists %}
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Id</th>
+          <th scope="col">Playlist Date</th>
+          <th scope="col">Theme</th>
+          <th scope="col">Songs</th>
+          <th scope="col">Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for playlist in playlists %}
+        <tr>
+          <th scope="row"><a href="/admin/playlist/{{ playlist.id }}">{{ playlist.id }}</a></th>
+          <td>{{ playlist.play_date }}</td>
+          <td>{{ playlist.theme }}</td>
+          <td>{{ playlist.song_list|safe }}</td>
+          <td>{{ playlist.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <form action="/admin/playlists/search" method="post" enctype="multipart/form-data">
+      <b>Search String (Song or Artist Name)</b><br />
+      <input class="form-control" type="text" style="width: 400px;" name="searchterm" placeholder="Search Term" value="" /><br />
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  {% endif %}
+  <br>
+  <p><a href="/admin">Back to Admin</a></p>
+
+{% endblock %}

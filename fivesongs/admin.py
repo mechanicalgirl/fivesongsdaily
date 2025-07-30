@@ -140,6 +140,21 @@ def pages(page_number):
         all_playlists.append(playlist)
     return render_template('admin/playlists.html', playlists=all_playlists, pagination=page_list)
 
+@bp.route('/admin/playlists/search', methods=('GET', 'POST'))
+@login_required
+def searchplaylists():
+    # search playlist song lists
+    if request.method == 'POST':
+        form_data = request.form
+        searchterm = form_data['searchterm']
+        db = get_db()
+        playlist_query = f"SELECT id, play_date, created_at, song_list, theme FROM playlist WHERE song_list LIKE '%{searchterm}%' ORDER BY play_date DESC"
+        db_playlists = db.execute(playlist_query).fetchall()
+    else:
+        # display an empty search form
+        db_playlists = None
+    return render_template('admin/playlistssearch.html', playlists=db_playlists)
+
 @bp.route('/admin/song/<int:id>')
 @login_required
 def song(id):
