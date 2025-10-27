@@ -421,6 +421,7 @@ def playlistdelete(id):
 @bp.route('/api/song/create', methods=["POST"])
 def song_endpoint():
     """ Process incoming song uploads """
+    # curl -F "title={SONG_TITLE}" -F "artist={ARTIST}" -F "duration={DURATION}" -F "album_name={ALBUM}" -F album_art=@{IMAGE_PATH}_300.jpg -F filepath=@{FILE_PATH}.mp3 https://fivesongsdaily.com/api/song/create --header "Flask-Key: {FLASK_KEY}
     if request.method == 'POST':
         # look for request.headers.get('Flask-Key')
         db = get_db()
@@ -469,4 +470,53 @@ def song_endpoint():
             }
             return Response(json.dumps(song_object)), 200
         except Exception as e:
+            return Response(e), 200
+
+@bp.route('/api/songs/delete', methods=["POST"])
+def song_delete_endpoint():
+    """ Process incoming song deletions by playlist id """
+    # curl -F "playlist_id={PLAYLIST_ID}" https://fivesongsdaily.com/api/songs/delete --header "Flask-Key: {FLASK_KEY}
+
+    if not request.headers['Flask-Key']:
+        return Response("Not Authorized"), 401
+
+    if request.method == 'POST':
+        db = get_db()
+        pwd = db.execute("SELECT password FROM user WHERE username = 'bshaurette'").fetchone()
+        key = pwd['password'].split('$')[-1]
+        if not request.headers['Flask-Key'] == key:
+            return Response("Not Authorized"), 401
+
+        form_data = request.form
+        playlist_id = int(form_data['playlist_id'])
+
+        song_objects = {
+            'filepath': [],
+            'album_art': [],
+            'song_id': [],
+            'status': ''
+        }
+
+        # get songs by playlist id:
+        song_query = f"SELECT id, filepath, album_art FROM song WHERE playlist_id = {playlist_id} ORDER BY id ASC"
+        db_songs = db.execute(song_query).fetchall()
+        print("DB SONGS", db_songs)
+        if not db_songs:
+            song_objects['status'] = f"Songs from playlist {playlist_id} not found"
+            return Response(json.dumps(song_objects)), 200
+
+        try:
+            for song in db_songs:
+                os.remove(os.path.join(UPLOAD_FOLDER + '/musicfiles', song['filepath']))
+                song_objects['filepath'].append(song['filepath'])
+                os.remove(os.path.join(UPLOAD_FOLDER + '/albumart', song['album_art']))
+                song_objects['album_art'].append(song['album_art'])
+                delete_query = f"DELETE FROM song WHERE id = {song['id']} RETURNING id;"
+                song_delete = db.execute(delete_query).fetchone()
+                db.commit()
+                song_objects['song_id'].append(song['id'])
+                song_objects['status'] = f"Songs from playlist {playlist_id} deleted"
+            return Response(json.dumps(song_objects)), 200
+        except Exception as e:
+            print(e)
             return Response(e), 200
