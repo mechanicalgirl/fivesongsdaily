@@ -2,6 +2,7 @@ click==8.1.8
 feedgen==1.0.0
 Flask==3.0.3
 Flask-Admin==1.6.1
+Flask-Caching==2.3.1
 Flask-SQLAlchemy==3.1.1
 gunicorn>=23.0.0
 pillow==11.1.0

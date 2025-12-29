@@ -1,11 +1,13 @@
 import os
-
 from flask import Flask
+from .extensions import cache
 
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
+        CACHE_TYPE='SimpleCache',
+        CACHE_DEFAULT_TIMEOUT=300,
         SECRET_KEY=os.urandom(12),
         DATABASE=os.path.join(app.instance_path, 'fivesongs.sqlite3'),
     )
@@ -26,6 +28,8 @@ def create_app(test_config=None):
     @app.route('/hello')
     def hello():
         return 'Hello, World!'
+
+    cache.init_app(app)
 
     from . import db
     db.init_app(app)

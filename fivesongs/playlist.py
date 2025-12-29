@@ -9,12 +9,17 @@ from werkzeug.exceptions import abort
 
 from fivesongs.auth import login_required
 from fivesongs.db import get_db
+from fivesongs.extensions import cache
+
 import json
+import time
 
 bp = Blueprint('playlist', __name__)
 
 @bp.route('/')
+@cache.cached(timeout=300)
 def index():
+    start = time.time()
     db = get_db()
     song_query = """
         SELECT id, artist, title, filepath, duration, album_name, album_art
@@ -50,6 +55,7 @@ def index():
         }
         js_songs.append(js_song)
 
+    print(f"Playlist query took {time.time() - start:.3f}s")
     return render_template('playlist/index.html', songs=db_songs, play_date=play_date, theme=theme, js_songs=js_songs)
 
 @bp.route('/today')

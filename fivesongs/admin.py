@@ -11,6 +11,7 @@ from werkzeug.utils import secure_filename
 
 from fivesongs.auth import login_required
 from fivesongs.db import get_db
+from fivesongs.extensions import cache
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'fivesongs/static')
 MP3_ALLOWED_EXTENSIONS = {'mp3'}
@@ -27,6 +28,7 @@ def pagination():
     return page_list
 
 @bp.route('/admin')
+@cache.cached(timeout=300)
 @login_required
 def admin():
 
@@ -66,6 +68,7 @@ def admin():
     return render_template('admin/index.html', songs=db_songs, playlists=all_playlists)
 
 @bp.route('/admin/songs')
+@cache.cached(timeout=300)
 @login_required
 def songs():
     """ List all songs """
@@ -79,6 +82,7 @@ def songs():
     return render_template('admin/songs.html', songs=db_songs)
 
 @bp.route('/admin/playlists')
+@cache.cached(timeout=300)
 @login_required
 def playlists():
     # all playlists, first page
@@ -111,6 +115,7 @@ def playlists():
     return render_template('admin/playlists.html', playlists=all_playlists, pagination=page_list)
 
 @bp.route('/admin/playlists/pages/<page_number>')
+@cache.cached(timeout=300)
 def pages(page_number):
     # all playlists, paginated
     page_list = pagination()
