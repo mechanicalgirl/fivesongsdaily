@@ -20,18 +20,32 @@ bp = Blueprint('playlist', __name__)
 @cache.cached(timeout=300)
 def index():
     start = time.time()
+    # Move all DB logic into a cached helper function
+    playlist_data = get_cached_playlist_data()
+    print(f"PLAYLIST QUERY TOOK {time.time() - start:.3f}s")
+    return render_template('playlist/index.html', 
+                          songs=playlist_data['songs'],
+                          play_date=playlist_data['play_date'],
+                          theme=playlist_data['theme'],
+                          js_songs=playlist_data['js_songs'])
+
+@cache.cached(timeout=300, key_prefix='playlist_data')
+def get_cached_playlist_data():
     db = get_db()
     song_query = """
         SELECT id, artist, title, filepath, duration, album_name, album_art
-        FROM song 
+        FROM song
         WHERE playlist_id = (SELECT id FROM playlist WHERE play_date = current_date)
         ORDER BY id ASC
     """
     db_songs = db.execute(song_query).fetchall()
 
+    # Convert Row objects to dicts for caching
+    songs_list = [dict(song) for song in db_songs]
+
     if db_songs:
         playlist = db.execute("SELECT play_date, theme FROM playlist WHERE play_date = current_date").fetchone()
-        play_date = playlist['play_date']
+        play_date = str(playlist['play_date'])
         theme = playlist['theme']
     else:
         song_query = """
@@ -41,7 +55,8 @@ def index():
             ORDER BY id ASC
         """
         db_songs = db.execute(song_query).fetchall()
-        play_date = datetime.today().date()
+        songs_list = [dict(song) for song in db_songs]
+        play_date = str(datetime.today().date())
         theme = 'Mermaids'
 
     js_songs = []
@@ -55,8 +70,12 @@ def index():
         }
         js_songs.append(js_song)
 
-    print(f"Playlist query took {time.time() - start:.3f}s")
-    return render_template('playlist/index.html', songs=db_songs, play_date=play_date, theme=theme, js_songs=js_songs)
+    return {
+        'songs': songs_list,
+        'play_date': play_date,
+        'theme': theme,
+        'js_songs': js_songs
+    }
 
 @bp.route('/today')
 def today():

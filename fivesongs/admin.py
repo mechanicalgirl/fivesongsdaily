@@ -35,8 +35,8 @@ def pagination():
     return page_list
 
 @bp.route('/admin')
-@cache.cached(timeout=60)
 @login_required
+@cache.cached(timeout=60)
 def admin():
 
     db = get_db()
@@ -75,8 +75,8 @@ def admin():
     return render_template('admin/index.html', songs=db_songs, playlists=all_playlists)
 
 @bp.route('/admin/songs')
-@cache.cached(timeout=60)
 @login_required
+@cache.cached(timeout=60)
 def songs():
     """ List all songs """
     db = get_db()
@@ -89,8 +89,8 @@ def songs():
     return render_template('admin/songs.html', songs=db_songs)
 
 @bp.route('/admin/playlists')
-@cache.cached(timeout=60)
 @login_required
+@cache.cached(timeout=60)
 def playlists():
     # all playlists, first page
     page_list = pagination()
