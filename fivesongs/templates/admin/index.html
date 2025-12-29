@@ -70,4 +70,10 @@
     No playlists available.<br />
   {% endif %}
 
+  <p>
+  <form action="{{ url_for('admin.clear_cache') }}" method="post">
+    <button type="submit">Clear Cache</button>
+  </form>
+  </p>
+
 {% endblock %}

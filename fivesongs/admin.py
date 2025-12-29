@@ -4,7 +4,7 @@ import os
 import sys
 
 from flask import (
-    Blueprint, current_app, g, redirect, render_template, request, Response, url_for
+    Blueprint, current_app, flash, g, redirect, render_template, request, Response, url_for
 )
 from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
@@ -19,6 +19,13 @@ ALBUMART_ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 bp = Blueprint('admin', __name__)
 
+@bp.route('/admin/clear-cache', methods=['POST'])
+@login_required
+def clear_cache():
+    cache.clear()
+    print('Cache cleared successfully!', 'success')
+    return redirect(url_for('admin.admin'))
+
 def pagination():
     db = get_db()
     post_count = db.execute("SELECT count(*) AS count FROM playlist;").fetchone()
@@ -28,7 +35,7 @@ def pagination():
     return page_list
 
 @bp.route('/admin')
-@cache.cached(timeout=300)
+@cache.cached(timeout=60)
 @login_required
 def admin():
 
@@ -68,7 +75,7 @@ def admin():
     return render_template('admin/index.html', songs=db_songs, playlists=all_playlists)
 
 @bp.route('/admin/songs')
-@cache.cached(timeout=300)
+@cache.cached(timeout=60)
 @login_required
 def songs():
     """ List all songs """
@@ -82,7 +89,7 @@ def songs():
     return render_template('admin/songs.html', songs=db_songs)
 
 @bp.route('/admin/playlists')
-@cache.cached(timeout=300)
+@cache.cached(timeout=60)
 @login_required
 def playlists():
     # all playlists, first page
@@ -115,7 +122,7 @@ def playlists():
     return render_template('admin/playlists.html', playlists=all_playlists, pagination=page_list)
 
 @bp.route('/admin/playlists/pages/<page_number>')
-@cache.cached(timeout=300)
+@cache.cached(timeout=60)
 def pages(page_number):
     # all playlists, paginated
     page_list = pagination()
