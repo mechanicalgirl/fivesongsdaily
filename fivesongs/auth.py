@@ -11,6 +11,8 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
+    return 'Registration is currently disabled.'
+    """
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -21,10 +23,6 @@ def register():
             error = 'Username is required.'
         elif not password:
             error = 'Password is required.'
-
-        # Make sure no one but me can register for now
-        if username != 'bshaurette':
-            error = 'You are not allowed to register.'
 
         if error is None:
             try:
@@ -37,11 +35,10 @@ def register():
                 error = f"User {username} is already registered."
             else:
                 return redirect(url_for("auth.login"))
-
         flash(error)
-
     return render_template('auth/register.html')
-
+    """
+    
 @bp.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
@@ -53,14 +50,10 @@ def login():
             'SELECT * FROM user WHERE username = ?', (username,)
         ).fetchone()
 
-        print(user)
-
         if user is None:
             error = 'Incorrect username.'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect password.'
-
-        print(error)
 
         if error is None:
             session.clear()

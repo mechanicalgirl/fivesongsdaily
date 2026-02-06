@@ -3,15 +3,18 @@ CLAUDE.md
 instance/fivesongs.sqlite3
 instance
 uberspace_notes.txt
-mastodon_notes.txt 
+mastodon_notes.txt
+generate_secret_key.py
 NOTES.txt
 rss.xml
 uv.lock
 
-scripts/song_upload.py
-
 *.bak
 venv
 *.swp
+
+# Environment variables
+.env
+.env.local
 
 **/__pycache__/

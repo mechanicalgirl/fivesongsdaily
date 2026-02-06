@@ -7,6 +7,7 @@ on:
 env:
   MASTODON_SERVER: ${{ secrets.MASTODON_SERVER }}
   MASTODON_TOKEN: ${{ secrets.MASTODON_TOKEN }}
+  MUSIC_SITE_URL: ${{ secrets.MUSIC_SITE_URL }}
 
 jobs:
   generate-playlist:
@@ -32,4 +33,4 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install requests==2.32.3
       - name: Run script
-        run: python3 .github/scripts/smpost.py ${{ env.MASTODON_SERVER }} ${{ env.MASTODON_TOKEN }}
+        run: python3 .github/scripts/smpost.py ${{ env.MASTODON_SERVER }} ${{ env.MASTODON_TOKEN }} ${{ env.MUSIC_SITE_URL }}

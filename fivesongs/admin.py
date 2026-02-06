@@ -4,7 +4,7 @@ import os
 import sys
 
 from flask import (
-    Blueprint, current_app, flash, g, redirect, render_template, request, Response, url_for
+    Blueprint, current_app, flash, g, jsonify, redirect, render_template, request, Response, url_for
 )
 from werkzeug.exceptions import abort
 from werkzeug.utils import secure_filename
@@ -444,13 +444,12 @@ def playlistdelete(id):
 @bp.route('/api/song/create', methods=["POST"])
 def song_endpoint():
     """ Process incoming song uploads """
-    # curl -F "title={SONG_TITLE}" -F "artist={ARTIST}" -F "duration={DURATION}" -F "album_name={ALBUM}" -F album_art=@{IMAGE_PATH}_300.jpg -F filepath=@{FILE_PATH}.mp3 https://fivesongsdaily.com/api/song/create --header "Flask-Key: {FLASK_KEY}
     if request.method == 'POST':
-        # look for request.headers.get('Flask-Key')
         db = get_db()
-        pwd = db.execute("SELECT password FROM user WHERE username = 'bshaurette'").fetchone()
-        key = pwd['password'].split('$')[-1]
-        if not request.headers['Flask-Key'] == key:
+        if not (request.headers['Flask-Key'] and request.headers['Auth-Name']):
+            return Response("Not Authorized"), 401
+        key = db.execute("SELECT password FROM user WHERE username = ?", (request.headers['Auth-Name'],)).fetchone()
+        if not request.headers['Flask-Key'] == key['password']:
             return Response("Not Authorized"), 401
 
         form_data = request.form
@@ -500,16 +499,14 @@ def song_endpoint():
 @bp.route('/api/songs/delete', methods=["POST"])
 def song_delete_endpoint():
     """ Process incoming song deletions by playlist id """
-    # curl -F "playlist_id={PLAYLIST_ID}" https://fivesongsdaily.com/api/songs/delete --header "Flask-Key: {FLASK_KEY}
-
     if not request.headers['Flask-Key']:
         return Response("Not Authorized"), 401
-
     if request.method == 'POST':
         db = get_db()
-        pwd = db.execute("SELECT password FROM user WHERE username = 'bshaurette'").fetchone()
-        key = pwd['password'].split('$')[-1]
-        if not request.headers['Flask-Key'] == key:
+        if not (request.headers['Flask-Key'] and request.headers['Auth-Name']):
+            return Response("Not Authorized"), 401
+        key = db.execute("SELECT password FROM user WHERE username = ?", (request.headers['Auth-Name'],)).fetchone()
+        if not request.headers['Flask-Key'] == key['password']:
             return Response("Not Authorized"), 401
 
         form_data = request.form
@@ -522,10 +519,8 @@ def song_delete_endpoint():
             'status': ''
         }
 
-        # get songs by playlist id:
         song_query = "SELECT id, filepath, album_art FROM song WHERE playlist_id = ? ORDER BY id ASC"
         db_songs = db.execute(song_query, (playlist_id,)).fetchall()
-        print("DB SONGS", db_songs)
         if not db_songs:
             song_objects['status'] = f"Songs from playlist {playlist_id} not found"
             return Response(json.dumps(song_objects)), 200
