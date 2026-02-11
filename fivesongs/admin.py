@@ -1,3 +1,4 @@
+import ast
 import json
 import math
 import os
@@ -440,6 +441,69 @@ def playlistdelete(id):
     else:
         return redirect('/admin/playlists', 302)
 
+@bp.route('/api/playlist/create', methods=["POST"])
+def playlist_create_endpoint():
+    """ Process incoming playlist metadata """
+    if request.method == 'POST':
+        errors = []
+        song_list = ''
+        db = get_db()
+        if not (request.headers['Flask-Key'] and request.headers['Auth-Name']):
+            return Response("Not Authorized"), 401
+        key = db.execute("SELECT password FROM user WHERE username = ?", (request.headers['Auth-Name'],)).fetchone()
+        if not request.headers['Flask-Key'] == key['password']:
+            return Response("Not Authorized"), 401
+
+        form_data = request.form
+        playlist_theme = form_data['theme']
+        playlist_date = form_data['date']
+        playlist_songs = form_data['song_ids']
+
+        insert_query = "INSERT INTO playlist (play_date, theme) VALUES(?, ?) RETURNING id"
+        playlist_create = db.execute(insert_query, (playlist_date, playlist_theme,)).fetchone()
+        db.commit()
+
+        playlist_id = playlist_create['id']
+
+        # update songs with the new playlist id
+        try:
+            song_ids = ast.literal_eval(playlist_songs)
+            placeholders = ','.join('?' * len(song_ids))
+            update_query = f"UPDATE song SET playlist_id = ? WHERE id IN ({placeholders}) RETURNING NULL"
+            songs_update = db.execute(update_query, (playlist_id, *song_ids)).fetchone()
+            db.commit()
+        except Exception as e:
+            errors.append(f"SONGS UPDATE {e}")
+            ## This will hit if there are fewer then five songs: invalid literal for int() with base 10: ''
+
+        # update the playlist with the new song_list
+        try:
+            songs = []
+            song_list_query = f"SELECT artist, title FROM song WHERE id IN ({placeholders})"
+            song_list_update = db.execute(song_list_query, tuple(song_ids)).fetchall()
+            for s in song_list_update:
+                song = f"{s['artist']} - {s['title']}"
+                songs.append(song)
+            song_list = "<br />".join(map(str, songs))
+
+            playlist_update_query = "UPDATE playlist SET song_list = ? WHERE id = ? RETURNING NULL"
+            playlist_update = db.execute(playlist_update_query, (song_list, playlist_id)).fetchone()
+            db.commit()
+        except Exception as e:
+            errors.append(f"SONG LIST UPDATE {e}")
+            ## If the previous block errors, we also get this: local variable 'song_ids' referenced before assignment
+
+        playlist_object = {
+            'id': playlist_id,
+            'theme': playlist_theme,
+            'date': playlist_date,
+            'song_list': song_list,
+            'errors': errors
+        }
+    if errors:
+        return Response(str(errors)), 200
+    else:
+        return Response(json.dumps(playlist_object)), 200
 
 @bp.route('/api/song/create', methods=["POST"])
 def song_endpoint():
