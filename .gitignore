@@ -1,10 +1,7 @@
 .DS_Store
 instance/fivesongs.sqlite3
 instance
-uberspace_notes.txt
-mastodon_notes.txt
-generate_secret_key.py
-NOTES.txt
+local_resources/
 rss.xml
 uv.lock
 
