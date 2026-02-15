@@ -4,6 +4,7 @@ instance
 local_resources/
 rss.xml
 uv.lock
+smpost_test.py
 
 *.bak
 venv

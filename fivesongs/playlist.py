@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import json
 
 from feedgen.feed import FeedGenerator
@@ -81,14 +81,15 @@ def get_cached_playlist_data():
 def today():
     """ Simple API endpoint for media posting """
     db = get_db()
-    playlist = db.execute("SELECT play_date, song_list, theme FROM playlist WHERE play_date = current_date").fetchone()
+    yesterdays_theme = db.execute("SELECT play_date, theme FROM playlist WHERE play_date = DATE('now', '-1 day')").fetchone()
+    playlist = db.execute("SELECT play_date, song_list FROM playlist WHERE play_date = current_date").fetchone()
     if not playlist:
         playlist = db.execute("SELECT play_date, song_list, theme FROM playlist WHERE id = 1").fetchone()
     song_list = playlist['song_list'].split('<br />')
     play = {
         'playlist_date': str(playlist['play_date']),
         'playlist_songs': song_list,
-        'playlist_theme': playlist['theme']
+        'playlist_theme': yesterdays_theme['theme']
     }
     output = json.loads(json.dumps(play))
     return output
