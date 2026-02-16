@@ -58,8 +58,8 @@ def login():
         if error is None:
             session.clear()
             session['user_id'] = user['id']
-            print(session)
-            print(url_for('index'))
+            # print(session)
+            # print(url_for('index'))
             return redirect(url_for('admin'))
 
     return render_template('auth/login.html')

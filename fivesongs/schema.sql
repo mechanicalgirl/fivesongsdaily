@@ -36,3 +36,18 @@ INSERT INTO song (artist, title, filepath, duration, album_name, album_art, play
 INSERT INTO song (artist, title, filepath, duration, album_name, album_art, playlist_id) VALUES ('This Mortal Coil', 'Song to the Siren', 'SongToTheSiren-ThisMortalCoil.mp3', '3:30', 'It''ll End In Tears', 'SongToTheSiren-ThisMortalCoil.jpg', 1);
 INSERT INTO song (artist, title, filepath, duration, album_name, album_art, playlist_id) VALUES ('The Blixunami', 'Splish Splash on Em', 'SplishSplashOnEm-TheBlixunami.mp3', '3:39', '', 'SplishSplashOnEm-TheBlixunami.jpg', 1);
 INSERT INTO song (artist, title, filepath, duration, album_name, album_art, playlist_id) VALUES ('Esthero', 'Black Mermaid', 'BlackMermaid-Esthero.mp3', '4:14', 'Everything Is Expensive', 'BlackMermaid-Esthero.jpg', 1);
+
+CREATE TABLE track (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ua TEXT,
+    device TEXT,
+    os TEXT,
+    browser TEXT,
+    is_bot TEXT,
+    is_email_client TEXT,
+    is_mobile TEXT,
+    is_pc TEXT,
+    is_tablet TEXT,
+    is_touch_capable TEXT,
+    request_date TEXT
+);

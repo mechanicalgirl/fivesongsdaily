@@ -26,3 +26,18 @@ class Playlist(db.Model):
     created_at = db.Column(db.Date, default=str(date.today()))
     song_list = db.Column(db.String, nullable=True)
 
+class Track(db.Model):
+    __tablename__ = 'track'
+
+    id = db.Column(db.Integer, primary_key=True)
+    ua = db.Column(db.String, nullable=True)
+    device = db.Column(db.String, nullable=True)
+    os = db.Column(db.String, nullable=True)
+    browser = db.Column(db.String, nullable=True)
+    is_bot = db.Column(db.String, nullable=True)
+    is_email_client = db.Column(db.String, nullable=True)
+    is_mobile = db.Column(db.String, nullable=True)
+    is_pc = db.Column(db.String, nullable=True)
+    is_tablet = db.Column(db.String, nullable=True)
+    is_touch_capable = db.Column(db.String, nullable=True)
+    request_date = db.Column(db.String, nullable=True)
