@@ -186,6 +186,14 @@ def allowed_file(type, filename):
     if type == 'albumart':
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALBUMART_ALLOWED_EXTENSIONS
 
+@bp.route('/admin/tracking')
+@login_required
+def track():
+    db = get_db()
+    sel_query = ("SELECT ua, device, os, browser, is_bot, is_email_client, is_mobile, is_pc, is_tablet, is_touch_capable, request_date FROM track;")
+    tracking = db.execute(sel_query).fetchall()
+    return render_template('admin/track.html', tracking=tracking)
+
 @bp.route('/admin/song/edit/<int:id>', methods=('GET', 'POST'))
 @login_required
 def songedit(id):

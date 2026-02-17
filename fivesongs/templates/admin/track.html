@@ -1,0 +1,44 @@
+{% extends 'adminbase.html' %}
+
+{% block content %}
+
+  {% if tracking%}
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">UA</th>
+          <th scope="col">Device</th>
+          <th scope="col">OS</th>
+          <th scope="col">Browser</th>
+          <th scope="col">Bot</th>
+          <th scope="col">Email</th>
+          <th scope="col">Mobile</th>
+          <th scope="col">PC</th>
+          <th scope="col">Tablet</th>
+          <th scope="col">Touch Capable</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for t in tracking %}
+        <tr>
+          <td>{{ t.request_date }}</td>
+          <td>{{ t.ua }}</td>
+          <td>{{ t.device }}</td>
+          <td>{{ t.os }}</td>
+          <td>{{ t.browser }}</td>
+          <td>{% if t.is_bot == "1" %}<span style="color: green;">&#x2714;</span>{% endif %}</td>
+          <td>{% if t.is_email_client == "1" %}<span style="color: green;">&#x2714;</span>{% endif %}</td>
+          <td>{% if t.is_mobile == "1" %}<span style="color: green;">&#x2714;</span>{% endif %}</td>
+          <td>{% if t.is_pc == "1" %}<span style="color: green;">&#x2714;</span>{% endif %}</td>
+          <td>{% if t.is_tablet == "1" %}<span style="color: green;">&#x2714;</span>{% endif %}</td>
+          <td>{% if t.is_touch_capable == "1" %}<span style="color: green;">&#x2714;</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    No songs available.<br />
+  {% endif %}
+
+{% endblock %}
