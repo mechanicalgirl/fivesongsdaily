@@ -4,26 +4,21 @@ import time
 
 from feedgen.feed import FeedGenerator
 from flask import (
-    Blueprint, flash, g, redirect, render_template, request, Response, url_for
+    Blueprint, flash, g, redirect, render_template, request, Response, send_from_directory, url_for
 )
-from user_agents import parse
 from werkzeug.exceptions import abort
 
 from fivesongs.auth import login_required
 from fivesongs.db import get_db
 from fivesongs.extensions import cache
-
+from fivesongs.track import capture
 
 bp = Blueprint('playlist', __name__)
 
 @bp.route('/')
 @cache.cached(timeout=300)
 def index():
-    user_agent = request.headers.get('User-Agent')
-    user_agent_parsed = parse(user_agent)
-    simple_tracking(user_agent_parsed)
-    # if user_agent_parsed.is_bot:
-    #     return Response("Not Authorized"), 401
+    capture(request.headers.get('User-Agent'))
     start = time.time()
     # Move all DB logic into a cached helper function
     playlist_data = get_cached_playlist_data()
@@ -33,25 +28,6 @@ def index():
                           play_date=playlist_data['play_date'],
                           theme=playlist_data['theme'],
                           js_songs=playlist_data['js_songs'])
-
-def simple_tracking(user_agent_parsed):
-    insert_query = ("INSERT INTO track (ua, device, os, browser, is_bot, is_email_client, is_mobile, is_pc, is_tablet, is_touch_capable, request_date) "
-                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);")
-    db = get_db()
-    track_update = db.execute(insert_query, (
-        user_agent_parsed.ua_string,
-        str(user_agent_parsed.device),
-        user_agent_parsed.get_os(),
-        user_agent_parsed.get_browser(),
-        user_agent_parsed.is_bot,
-        user_agent_parsed.is_email_client,
-        user_agent_parsed.is_mobile,
-        user_agent_parsed.is_pc,
-        user_agent_parsed.is_tablet,
-        user_agent_parsed.is_touch_capable,
-        datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    ))
-    db.commit()
 
 @cache.cached(timeout=300, key_prefix='playlist_data')
 def get_cached_playlist_data():
@@ -103,6 +79,7 @@ def get_cached_playlist_data():
 
 @bp.route('/today')
 def today():
+    capture(request.headers.get('User-Agent'))
     """ Simple API endpoint for media posting """
     db = get_db()
     yesterdays_theme = db.execute("SELECT play_date, theme FROM playlist WHERE play_date = DATE('now', '-1 day')").fetchone()

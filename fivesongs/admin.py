@@ -13,6 +13,7 @@ from werkzeug.utils import secure_filename
 from fivesongs.auth import login_required
 from fivesongs.db import get_db
 from fivesongs.extensions import cache
+from fivesongs.track import capture
 
 UPLOAD_FOLDER = os.path.join(os.getcwd(), 'fivesongs/static')
 MP3_ALLOWED_EXTENSIONS = {'mp3'}
@@ -39,7 +40,7 @@ def pagination():
 @login_required
 @cache.cached(timeout=60)
 def admin():
-
+    capture(request.headers.get('User-Agent'))
     db = get_db()
     song_query = """
         SELECT id, artist, title, created_at
@@ -190,7 +191,7 @@ def allowed_file(type, filename):
 @login_required
 def track():
     db = get_db()
-    sel_query = ("SELECT ua, device, os, browser, is_bot, is_email_client, is_mobile, is_pc, is_tablet, is_touch_capable, request_date FROM track;")
+    sel_query = ("SELECT ua, device, os, browser, is_bot, is_email_client, is_mobile, is_pc, is_tablet, is_touch_capable, request_date FROM track ORDER BY request_date DESC;")
     tracking = db.execute(sel_query).fetchall()
     return render_template('admin/track.html', tracking=tracking)
 
@@ -452,6 +453,7 @@ def playlistdelete(id):
 @bp.route('/api/playlist/create', methods=["POST"])
 def playlist_create_endpoint():
     """ Process incoming playlist metadata """
+    capture(request.headers.get('User-Agent'))
     if request.method == 'POST':
         errors = []
         song_list = ''
@@ -516,6 +518,7 @@ def playlist_create_endpoint():
 @bp.route('/api/song/create', methods=["POST"])
 def song_endpoint():
     """ Process incoming song uploads """
+    capture(request.headers.get('User-Agent'))
     if request.method == 'POST':
         db = get_db()
         if not (request.headers['Flask-Key'] and request.headers['Auth-Name']):
@@ -571,6 +574,7 @@ def song_endpoint():
 @bp.route('/api/songs/delete', methods=["POST"])
 def song_delete_endpoint():
     """ Process incoming song deletions by playlist id """
+    capture(request.headers.get('User-Agent'))
     if not request.headers['Flask-Key']:
         return Response("Not Authorized"), 401
     if request.method == 'POST':

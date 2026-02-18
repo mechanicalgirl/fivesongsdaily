@@ -1,5 +1,5 @@
 import os
-from flask import Flask
+from flask import Flask, send_from_directory
 from .extensions import cache
 
 
@@ -24,6 +24,10 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+
+    @app.route('/robots.txt')
+    def serve_robots_txt():
+        return send_from_directory(os.path.join(app.root_path, 'static'), 'robots.txt')
 
     @app.route('/hello')
     def hello():
