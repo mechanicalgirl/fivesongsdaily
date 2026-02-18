@@ -22,8 +22,8 @@ def index():
     user_agent = request.headers.get('User-Agent')
     user_agent_parsed = parse(user_agent)
     simple_tracking(user_agent_parsed)
-    if user_agent_parsed.is_bot:
-        return Response("Not Authorized"), 401
+    # if user_agent_parsed.is_bot:
+    #     return Response("Not Authorized"), 401
     start = time.time()
     # Move all DB logic into a cached helper function
     playlist_data = get_cached_playlist_data()
