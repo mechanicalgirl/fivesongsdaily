@@ -16,7 +16,9 @@
 <nav class="navbar navbar-light bg-light">
   <a class="navbar-brand" href="/">Site Home</a>
   <a class="navbar-brand" href="/admin">Admin Home</a>
+  <a class="navbar-brand" href="/admin/tracking">Tracking</a>
   <a class="navbar-brand" href="{{ url_for('auth.logout') }}">Log Out</a>
+
   {% if g.user %} 
     <div>You are logged in as {{ g.user['username'] }}</div>
   {% else %}
