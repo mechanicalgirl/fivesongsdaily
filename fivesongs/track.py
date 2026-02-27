@@ -8,7 +8,7 @@ from fivesongs.db import get_db
 def capture(user_agent):
     user_agent_parsed = parse(user_agent)
     simple_tracking(user_agent_parsed)
-    disallowed = ['AhrefsBot 7.0', 'BacklinksExtendedBot', 'Inventory Crawler', 'domainsbot', 'SeznamBot 4.0', 'SERankingBacklinksBot 1.0', 'domains-monitor-bot 1.0', 'serpstatbot 2.1']
+    disallowed = ['AhrefsBot 7.0', 'BacklinksExtendedBot', 'Inventory Crawler', 'domainsbot', 'SeznamBot 4.0', 'SERankingBacklinksBot 1.0', 'domains-monitor-bot 1.0', 'serpstatbot 2.1', 'OAI-SearchBot 1.3', 'DataForSeoBot 1.0']
     if user_agent_parsed.get_browser() in disallowed:
         abort(401)
     if user_agent_parsed.ua_string == 'http://5songsdaily.com/wordpress/wp-admin/setup-config.php':
