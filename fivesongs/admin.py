@@ -191,9 +191,9 @@ def allowed_file(type, filename):
 @login_required
 def track():
     db = get_db()
-    sel_query = ("SELECT ua, device, os, browser, is_bot, is_email_client, is_mobile, is_pc, is_tablet, is_touch_capable, request_date FROM track ORDER BY request_date DESC;")
+    sel_query = ("SELECT ua, device, os, browser, is_bot, is_email_client, is_mobile, is_pc, is_tablet, is_touch_capable, request_date FROM track ORDER BY request_date DESC LIMIT 20;")
     tracking = db.execute(sel_query).fetchall()
-    trend_query = ("SELECT STRFTIME('%Y-%m-%d', request_date) AS date_request, COUNT(*) AS date_count FROM track GROUP BY STRFTIME('%Y-%m-%d', request_date);")
+    trend_query = ("SELECT STRFTIME('%Y-%m-%d', request_date) AS date_request, COUNT(*) AS date_count FROM track WHERE is_bot IS NOT true GROUP BY STRFTIME('%Y-%m-%d', request_date);")
     trends = db.execute(trend_query).fetchall()
     return render_template('admin/track.html', tracking=tracking, trends=trends)
 
