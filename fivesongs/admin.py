@@ -618,3 +618,18 @@ def song_delete_endpoint():
         except Exception as e:
             print(e)
             return Response(str(e)), 200
+
+@bp.route('/api/get/playlistid', methods=["GET"])
+def get_past_playlist():
+    capture(request.headers.get('User-Agent'))
+    """ Get recent playlist id """
+    if request.method == 'GET':
+        db = get_db()
+        if not (request.headers['Flask-Key'] and request.headers['Auth-Name']):
+            return Response("Not Authorized"), 401
+        key = db.execute("SELECT password FROM user WHERE username = ?", (request.headers['Auth-Name'],)).fetchone()
+        if not request.headers['Flask-Key'] == key['password']:
+            return Response("Not Authorized"), 401
+
+        previous_playlist = db.execute("SELECT id FROM playlist WHERE play_date = DATE('now', '-2 day')").fetchone()
+        return previous_playlist
