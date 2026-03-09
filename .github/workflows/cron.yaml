@@ -42,5 +42,4 @@ jobs:
       - name: Playlist cleanup
         run: |
           second_response=$(curl -s -X POST -F "playlist_id=${{ env.response }}" "${{ secrets.CL_URL }}" -H "${{ secrets.API_HEADER_KEY }}" -H "${{ secrets.API_HEADER_NAME }}")
-          echo "Second Response: $second_response"
 
