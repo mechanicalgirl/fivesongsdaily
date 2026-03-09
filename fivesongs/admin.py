@@ -632,4 +632,5 @@ def get_past_playlist():
             return Response("Not Authorized"), 401
 
         previous_playlist = db.execute("SELECT id FROM playlist WHERE play_date = DATE('now', '-2 day')").fetchone()
-        return previous_playlist
+        id = str(previous_playlist['id'])
+        return id
