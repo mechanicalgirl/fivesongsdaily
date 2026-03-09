@@ -34,3 +34,13 @@ jobs:
           python3 -m pip install requests==2.32.3
       - name: Run script
         run: python3 .github/scripts/smpost.py ${{ env.MASTODON_SERVER }} ${{ env.MASTODON_TOKEN }} ${{ env.MUSIC_SITE_URL }}
+      - name: Get playlist id
+        id: first_request
+        run: |
+          response=$(curl -s -X GET "${{ secrets.PL_URL }}" -H "${{ secrets.API_HEADER_KEY }}" -H "${{ secrets.API_HEADER_NAME }}")
+          echo "response=$response" >> $GITHUB_ENV
+      - name: Playlist cleanup
+        run: |
+          second_response=$(curl -s -X POST -F "playlist_id=${{ env.response }}" "${{ secrets.CL_URL }}" -H "${{ secrets.API_HEADER_KEY }}" -H "${{ secrets.API_HEADER_NAME }}")
+          echo "Second Response: $second_response"
+
