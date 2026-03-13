@@ -95,6 +95,16 @@ def today():
     output = json.loads(json.dumps(play))
     return output
 
+@bp.route('/archive')
+@cache.cached(timeout=1200, key_prefix='playlist_archive')
+def archive():
+    capture(request.headers.get('User-Agent'))
+    """ Listing of previous playlists """
+    db = get_db()
+    query = "SELECT play_date, theme, song_list FROM playlist WHERE play_date <= current_date ORDER BY play_date DESC"
+    playlists = db.execute(query).fetchall()
+    return render_template('playlist/archive.html', playlists=playlists)
+
 @bp.route('/rss')
 def rss():
     fg = FeedGenerator() 
@@ -131,6 +141,5 @@ def rss():
         fe.published(e['date'])
         
     fg.rss_file('rss.xml')
-    rssfeed  = fg.rss_str(pretty=True)
-        
-    return rssfeed
+    rssfeed = fg.rss_str()
+    return Response(rssfeed, mimetype='application/rss+xml')

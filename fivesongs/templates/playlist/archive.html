@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th,
+    td {
+      text-align: left;
+      padding: 8px;
+    }
+    tr:nth-child(even) {
+      background-color: rgba(255, 165, 0, 0.5);
+    }
+  </style>
+
+  {% if playlists %}
+    <table class="table">
+      <tr>
+        <th>Playlist Date</th>
+        <th>Theme</th>
+        <th>Songs</th>
+      </tr>
+      {% for playlist in playlists %}
+      <tr>
+        <td style="vertical-align:top;">{{ playlist.play_date }}</td>
+        <td style="vertical-align:top;">{{ playlist.theme }}</td>
+        <td style="vertical-align:top;">{{ playlist.song_list|safe }}</td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% endif %}
+
+{% endblock %}
