@@ -18,3 +18,16 @@ jobs:
           remote_host: ${{ secrets.SSH_HOST }}
           remote_user: ${{ secrets.SSH_USERNAME }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Post-deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/mechanic/fivesongsdaily
+            python3.11 -m venv venv
+            source venv/bin/activate
+            pip install -r requirements.txt
+            supervisorctl restart flask
+
