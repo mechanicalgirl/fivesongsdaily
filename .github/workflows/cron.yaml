@@ -32,7 +32,7 @@ jobs:
         run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install requests==2.32.3
-      - name: Run script
+      - name: Post to Mastodon
         run: python3 .github/scripts/smpost.py ${{ env.MASTODON_SERVER }} ${{ env.MASTODON_TOKEN }} ${{ env.MUSIC_SITE_URL }}
       - name: Get playlist id
         id: first_request
