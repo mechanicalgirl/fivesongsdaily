@@ -11,7 +11,7 @@ url = f'{music_site_url}/today'
 api = requests.get(url)
 json_response = api.json()
 
-with open('post_id.txt', 'r') as file:
+with open('.github/scripts/post_id.txt', 'r') as file:
     yesterdays_post_id = file.readline().strip()
 yesterdays_mastodon_url = 'https://musicworld.social/@fivesongsdaily/'+yesterdays_post_id
 
