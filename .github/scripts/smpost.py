@@ -10,12 +10,18 @@ music_site_url = sys.argv[3]
 url = f'{music_site_url}/today'
 api = requests.get(url)
 json_response = api.json()
+
+with open('post_id.txt', 'r') as file:
+    yesterdays_post_id = file.readline().strip()
+yesterdays_mastodon_url = 'https://musicworld.social/@fivesongsdaily/'+yesterdays_post_id
+
 text = (
     f"Today's Playlist: {json_response['playlist_date']}\n\r"
     "\n\r"
     f"{'\n'.join(json_response['playlist_songs'])}\n\r"
     "\n\r"
-    f"Yesterday's Theme: {json_response['playlist_theme']}\n\r"
+    f"Yesterday's Theme: {json_response['playlist_theme']}\n"
+    f"{yesterdays_mastodon_url}\n\r"
     "\n\r"
     f"{music_site_url}"
 )
@@ -28,4 +34,8 @@ params = {'status': text}
 resp = requests.post(mastodon_url, data=params, headers=headers)
 
 print(json.dumps(resp.json(), indent=2))
+todays_post_id = resp.json()['url'].split('/')[-1]
+print("new post id", todays_post_id)
+with open('post_id.txt', 'w') as file:
+    file.write(todays_post_id)
 resp.raise_for_status()

@@ -34,6 +34,13 @@ jobs:
           python3 -m pip install requests==2.32.3
       - name: Post to Mastodon
         run: python3 .github/scripts/smpost.py ${{ env.MASTODON_SERVER }} ${{ env.MASTODON_TOKEN }} ${{ env.MUSIC_SITE_URL }}
+      - name: Commit Mastodon post id file
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .github/scripts/post_id.txt
+          git commit -m "Mastodon post id for $(date +%Y-%m-%d)" || echo "No changes to commit"
+          git push
       - name: Get playlist id
         id: first_request
         run: |
