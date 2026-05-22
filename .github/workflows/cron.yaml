@@ -3,6 +3,7 @@ name: Mastodon Post
 on:
   schedule:
     - cron: "15 0 * * *"
+  workflow_dispatch:
 
 env:
   MASTODON_SERVER: ${{ secrets.MASTODON_SERVER }}
