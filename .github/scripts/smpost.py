@@ -34,8 +34,8 @@ params = {'status': text}
 resp = requests.post(mastodon_url, data=params, headers=headers)
 
 print(json.dumps(resp.json(), indent=2))
-todays_post_id = resp.json()['url'].split('/')[-1]
+todays_post_id = resp.json()['id']
 print("new post id", todays_post_id)
-with open('post_id.txt', 'w') as file:
+with open('.github/scripts/post_id.txt', 'w') as file:
     file.write(todays_post_id)
 resp.raise_for_status()
