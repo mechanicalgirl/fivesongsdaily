@@ -40,7 +40,7 @@ def pagination():
 @login_required
 @cache.cached(timeout=60)
 def admin():
-    capture(request.headers.get('User-Agent'))
+    capture(request.headers, request.url)
     db = get_db()
     song_query = """
         SELECT id, artist, title, created_at
@@ -186,16 +186,6 @@ def allowed_file(type, filename):
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in MP3_ALLOWED_EXTENSIONS
     if type == 'albumart':
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALBUMART_ALLOWED_EXTENSIONS
-
-@bp.route('/admin/tracking')
-@login_required
-def track():
-    db = get_db()
-    sel_query = ("SELECT ua, device, os, browser, is_bot, is_email_client, is_mobile, is_pc, is_tablet, is_touch_capable, request_date FROM track ORDER BY request_date DESC LIMIT 20;")
-    tracking = db.execute(sel_query).fetchall()
-    trend_query = ("SELECT STRFTIME('%Y-%m-%d', request_date) AS date_request, COUNT(*) AS date_count FROM track WHERE is_bot IS NOT true GROUP BY STRFTIME('%Y-%m-%d', request_date);")
-    trends = db.execute(trend_query).fetchall()
-    return render_template('admin/track.html', tracking=tracking, trends=trends)
 
 @bp.route('/admin/song/edit/<int:id>', methods=('GET', 'POST'))
 @login_required
@@ -455,7 +445,7 @@ def playlistdelete(id):
 @bp.route('/api/playlist/create', methods=["POST"])
 def playlist_create_endpoint():
     """ Process incoming playlist metadata """
-    capture(request.headers.get('User-Agent'))
+    capture(request.headers, request.url)
     if request.method == 'POST':
         errors = []
         song_list = ''
@@ -520,7 +510,7 @@ def playlist_create_endpoint():
 @bp.route('/api/song/create', methods=["POST"])
 def song_endpoint():
     """ Process incoming song uploads """
-    capture(request.headers.get('User-Agent'))
+    capture(request.headers, request.url)
     if request.method == 'POST':
         db = get_db()
         if not (request.headers['Flask-Key'] and request.headers['Auth-Name']):
@@ -576,7 +566,7 @@ def song_endpoint():
 @bp.route('/api/songs/delete', methods=["POST"])
 def song_delete_endpoint():
     """ Process incoming song deletions by playlist id """
-    capture(request.headers.get('User-Agent'))
+    capture(request.headers, request.url)
     if not request.headers['Flask-Key']:
         return Response("Not Authorized"), 401
     if request.method == 'POST':
@@ -621,7 +611,7 @@ def song_delete_endpoint():
 
 @bp.route('/api/get/playlistid', methods=["GET"])
 def get_past_playlist():
-    capture(request.headers.get('User-Agent'))
+    capture(request.headers, request.url)
     """ Get recent playlist id """
     if request.method == 'GET':
         db = get_db()
@@ -634,3 +624,30 @@ def get_past_playlist():
         previous_playlist = db.execute("SELECT id FROM playlist WHERE play_date = DATE('now', '-2 day')").fetchone()
         id = str(previous_playlist['id'])
         return id
+
+@bp.route('/admin/tracking')
+@login_required
+def track():
+    db = get_db()
+
+    sel_query = ("SELECT ua, device, os, browser, referer, url, blocked, request_date FROM track ORDER BY request_date DESC LIMIT 200;")
+    tracking = db.execute(sel_query).fetchall()
+    tracking_objs = []
+    for t in tracking:
+        tobj = {
+            'ua': t['ua'],
+            'device': eval(t['device']),
+            'os': eval(t['os']),
+            'browser': eval(t['browser']),
+            'referer': t['referer'],
+            'url': t['url'],
+            'blocked': t['blocked'],
+            'request_date': t['request_date']
+        }
+        tracking_objs.append(tobj)
+
+    trend_query = ("SELECT STRFTIME('%Y-%m-%d', request_date) AS date_request, COUNT(*) AS date_count FROM track GROUP BY STRFTIME('%Y-%m-%d', request_date);")
+    ## TODO: find a way to eliminate bots from the visit count
+    ## WHERE is_bot IS NOT true
+    trends = db.execute(trend_query).fetchall()
+    return render_template('admin/track.html', tracking=tracking_objs, trends=trends)

@@ -34,12 +34,9 @@
           <th scope="col">Device</th>
           <th scope="col">OS</th>
           <th scope="col">Browser</th>
-          <th scope="col">Bot</th>
-          <th scope="col">Email</th>
-          <th scope="col">Mobile</th>
-          <th scope="col">PC</th>
-          <th scope="col">Tablet</th>
-          <th scope="col">Touch Capable</th>
+          <th scope="col">Referer</th>
+          <th scope="col">URL</th>
+          <th scope="col">Blocked</th>
         </tr>
       </thead>
       <tbody>
@@ -47,15 +44,12 @@
         <tr>
           <td>{{ t.request_date }}</td>
           <td>{{ t.ua }}</td>
-          <td>{{ t.device }}</td>
-          <td>{{ t.os }}</td>
-          <td>{{ t.browser }}</td>
-          <td>{% if t.is_bot == "1" %}<span style="color: green;">&#x2714;</span>{% endif %}</td>
-          <td>{% if t.is_email_client == "1" %}<span style="color: green;">&#x2714;</span>{% endif %}</td>
-          <td>{% if t.is_mobile == "1" %}<span style="color: green;">&#x2714;</span>{% endif %}</td>
-          <td>{% if t.is_pc == "1" %}<span style="color: green;">&#x2714;</span>{% endif %}</td>
-          <td>{% if t.is_tablet == "1" %}<span style="color: green;">&#x2714;</span>{% endif %}</td>
-          <td>{% if t.is_touch_capable == "1" %}<span style="color: green;">&#x2714;</span>{% endif %}</td>
+          <td>{{ t.device.family }} {{ t.device.brand }} {{ t.device.model }}</td>
+          <td>{{ t.os.family }} {{ t.os.major }}.{{ t.os.minor }}</td>
+          <td>{{ t.browser.family }} {{ t.browser.major }}.{{ t.browser.minor }}</td>
+          <td>{{ t.referer }}</td>
+          <td>{{ t.url }}</td>
+          <td>{% if t.blocked=='0' %}False{% else %}True{% endif %}</td>
         </tr>
         {% endfor %}
       </tbody>

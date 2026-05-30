@@ -8,9 +8,9 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Deploy using Rsync
-        uses: burnett01/rsync-deployments@6.0.0
+        uses: burnett01/rsync-deployments@8.0.3
         with:
           switches: -avrh --delete --exclude=".github" --exclude="instance/" --exclude="fivesongs/static/musicfiles"  --exclude="fivesongs/static/albumart"
           path: /
