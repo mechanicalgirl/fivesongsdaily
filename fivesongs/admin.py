@@ -646,8 +646,6 @@ def track():
         }
         tracking_objs.append(tobj)
 
-    trend_query = ("SELECT STRFTIME('%Y-%m-%d', request_date) AS date_request, COUNT(*) AS date_count FROM track GROUP BY STRFTIME('%Y-%m-%d', request_date);")
-    ## TODO: find a way to eliminate bots from the visit count
-    ## WHERE is_bot IS NOT true
+    trend_query = ("SELECT STRFTIME('%Y-%m-%d', request_date) AS date_request, COUNT(*) AS date_count FROM track WHERE blocked != '1' GROUP BY STRFTIME('%Y-%m-%d', request_date);")
     trends = db.execute(trend_query).fetchall()
     return render_template('admin/track.html', tracking=tracking_objs, trends=trends)

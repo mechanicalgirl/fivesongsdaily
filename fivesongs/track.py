@@ -17,7 +17,6 @@ def capture(request_headers, request_url):
     simple_tracking(ua_dict, blocked=False)
 
 def simple_tracking(ua_dict, blocked):
-    print("BLOCKED", blocked)
     insert_query = ("INSERT INTO track (ua, device, os, browser, referer, url, blocked, request_date) "
                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?) "
                     "RETURNING id;")
