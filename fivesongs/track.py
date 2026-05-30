@@ -1,36 +1,36 @@
 from datetime import datetime
 
 from flask import abort
-from user_agents import parse
+from ua_parser import user_agent_parser
 
 from fivesongs.db import get_db
+from fivesongs.disallowed import disallowed_list
 
-def capture(user_agent):
-    user_agent_parsed = parse(user_agent)
-    simple_tracking(user_agent_parsed)
-    disallowed = ['AhrefsBot', 'Amazonbot', 'anthropic-ai', 'Applebot-Extended', 'Applebot', 'BacklinksExtendedBot', 'Baiduspider 2.0', 'bingbot 2.0', 'Bytespider', 'CCBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web', 'DataForSeoBot 1.0', 'Diffbot', 'domains-monitor-bot', 'domainsbot', 'DotBot 1.2', 'FacebookBot ', 'Googlebot 2.1', 'Google-Extended', 'GPTBot 1.0', 'GPTBot 1.3', 'ImagesiftBot', 'Inventory Crawler', 'Mediapartners-Google*', 'net-Robot', 'OAI-SearchBot 1.3', 'Omgilibot', 'Omgili', 'PerplexityBot', 'research-bot 1.0', 'SaaSBrowserBot 1.0', 'SERankingBacklinksBot', 'serpstatbot', 'SeznamBot', 'SparixEmailScraper 1.0', 'spider', 'TruliaBot', 'Twitterbot', 'wpbot 1.4', 'YouBot']
-    if user_agent_parsed.get_browser() in disallowed:
+def capture(request_headers, request_url):
+    user_agent = request_headers.get('User-Agent')
+    ua_dict = user_agent_parser.Parse(user_agent)
+    ua_dict['referer'] = request_headers.get('Referer')
+    ua_dict['request_url'] = request_url
+    if ua_dict['user_agent']['family'] in disallowed_list:
+        simple_tracking(ua_dict, blocked=True)
         abort(401)
-    if user_agent_parsed.ua_string == 'http://5songsdaily.com/wordpress/wp-admin/setup-config.php':
-        abort(401)
+    simple_tracking(ua_dict, blocked=False)
 
-def simple_tracking(user_agent_parsed):
-    insert_query = ("INSERT INTO track (ua, device, os, browser, is_bot, is_email_client, is_mobile, is_pc, is_tablet, is_touch_capable, request_date) "
-                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) "
+def simple_tracking(ua_dict, blocked):
+    print("BLOCKED", blocked)
+    insert_query = ("INSERT INTO track (ua, device, os, browser, referer, url, blocked, request_date) "
+                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?) "
                     "RETURNING id;")
     try:
         db = get_db()
         track_insert = db.execute(insert_query, (
-            user_agent_parsed.ua_string,
-            str(user_agent_parsed.device),
-            user_agent_parsed.get_os(),
-            user_agent_parsed.get_browser(),
-            user_agent_parsed.is_bot,
-            user_agent_parsed.is_email_client,
-            user_agent_parsed.is_mobile,
-            user_agent_parsed.is_pc,
-            user_agent_parsed.is_tablet,
-            user_agent_parsed.is_touch_capable,
+            ua_dict['string'],
+            str(ua_dict['device']),
+            str(ua_dict['os']),
+            str(ua_dict['user_agent']),
+            str(ua_dict['referer']),
+            str(ua_dict['request_url']),
+            blocked,
             datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         )).fetchone()
         ua_id = track_insert['id']

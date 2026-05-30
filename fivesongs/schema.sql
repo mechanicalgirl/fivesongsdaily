@@ -43,11 +43,8 @@ CREATE TABLE track (
     device TEXT,
     os TEXT,
     browser TEXT,
-    is_bot TEXT,
-    is_email_client TEXT,
-    is_mobile TEXT,
-    is_pc TEXT,
-    is_tablet TEXT,
-    is_touch_capable TEXT,
+    referer TEXT,
+    url TEXT,
+    blocked TEXT,
     request_date TEXT
 );
