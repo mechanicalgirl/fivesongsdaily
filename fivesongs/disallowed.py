@@ -24,6 +24,7 @@ disallowed_list = [
     'GPTBot',
     'ImagesiftBot',
     'Inventory Crawler',
+    'lol web bot',
     'Mediapartners-Google*',
     'net-Robot',
     'OAI-SearchBot',
