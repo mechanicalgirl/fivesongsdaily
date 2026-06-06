@@ -16,7 +16,7 @@ def capture(request_headers, request_url):
     db = get_db()
     disallowed_request = db.execute("SELECT value, block_type FROM blocklist", ()).fetchall()
     # Blocked agents
-    disallowed_agents = [d['value'] for d in disallowed_request if d['block_type'] == 'ua_family']
+    disallowed_agents = [d['value'] for d in disallowed_request if d['block_type'] == 'ua_agent']
     # In some cases, I've seen User-Agent strings that contain substrings like `wp-admin`
     disallowed_strs = [d['value'] for d in disallowed_request if d['block_type'] == 'ua_string']
     # Sometimes I want to block on substrings that show up in invalid, probing request urls
