@@ -5,6 +5,7 @@ from flask import abort
 from ua_parser import user_agent_parser
 
 from fivesongs.db import get_db
+from fivesongs.extensions import cache
 
 def capture(request_headers, request_url):
     user_agent = request_headers.get('User-Agent', '')
@@ -12,15 +13,7 @@ def capture(request_headers, request_url):
     ua_dict['referer'] = request_headers.get('Referer')
     ua_dict['request_url'] = request_url
 
-    # TODO: add caching here so that you're not hitting the db on every request
-    db = get_db()
-    disallowed_request = db.execute("SELECT value, block_type FROM blocklist", ()).fetchall()
-    # Blocked agents
-    disallowed_agents = [d['value'] for d in disallowed_request if d['block_type'] == 'ua_agent']
-    # In some cases, I've seen User-Agent strings that contain substrings like `wp-admin`
-    disallowed_strs = [d['value'] for d in disallowed_request if d['block_type'] == 'ua_string']
-    # Sometimes I want to block on substrings that show up in invalid, probing request urls
-    disallowed_paths = [d['value'] for d in disallowed_request if d['block_type'] == 'path']
+    disallowed_agents, disallowed_strs, disallowed_paths = get_disallowed()
 
     blocked = (
         ua_dict['user_agent']['family'] in disallowed_agents or
@@ -30,6 +23,19 @@ def capture(request_headers, request_url):
     simple_tracking(ua_dict, blocked=blocked)
     if blocked:
         abort(401)
+
+@cache.cached(timeout=1200, key_prefix='blocklist')
+def get_disallowed():
+    db = get_db()
+    disallowed_request = db.execute("SELECT value, block_type FROM blocklist", ()).fetchall()
+
+    # Blocked agents
+    disallowed_agents = [d['value'] for d in disallowed_request if d['block_type'] == 'ua_agent']
+    # In some cases, I've seen User-Agent strings that contain substrings like `wp-admin`
+    disallowed_strs = [d['value'] for d in disallowed_request if d['block_type'] == 'ua_string']
+    # Sometimes I want to block on substrings that show up in invalid, probing request urls
+    disallowed_paths = [d['value'] for d in disallowed_request if d['block_type'] == 'path']
+    return disallowed_agents, disallowed_strs, disallowed_paths
 
 def simple_tracking(ua_dict, blocked):
     insert_query = ("INSERT INTO track (ua, device, os, browser, referer, url, blocked, request_date) "

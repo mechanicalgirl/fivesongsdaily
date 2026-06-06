@@ -672,6 +672,7 @@ def track_blocklist_add():
             datetime.now().strftime("%Y-%m-%d")
         ))
         db.commit()
+        cache.delete('blocklist')
         return redirect("/admin/tracking/blocklist")
     else:
         return render_template('admin/blockcreate.html')
