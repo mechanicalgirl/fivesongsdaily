@@ -43,13 +43,13 @@
         {% for t in tracking %}
         <tr>
           <td>{{ t.request_date }}</td>
-          <td>{{ t.ua }}</td>
+          <td style="background: #dae5f4">{{ t.ua }}</td>
           <td>{{ t.device.family }} {{ t.device.brand }} {{ t.device.model }}</td>
-          <td>{{ t.os.family }} {{ t.os.major }}.{{ t.os.minor }}</td>
+          <td style="background: #dae5f4">{{ t.os.family }} {{ t.os.major }}.{{ t.os.minor }}</td>
           <td>{{ t.browser.family }} {{ t.browser.major }}.{{ t.browser.minor }}</td>
-          <td>{{ t.referer }}</td>
+          <td style="background: #dae5f4">{{ t.referer }}</td>
           <td>{{ t.url }}</td>
-          <td>{% if t.blocked=='0' %}False{% else %}True{% endif %}</td>
+          <td style="background: #dae5f4">{% if t.blocked=='0' %}&nbsp;{% else %}&#10060{% endif %}</td>
         </tr>
         {% endfor %}
       </tbody>
