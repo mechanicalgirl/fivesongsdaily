@@ -15,10 +15,13 @@ from fivesongs.track import capture
 
 bp = Blueprint('playlist', __name__)
 
+@bp.before_request
+def track():
+    capture(request.headers, request.url)
+
 @bp.route('/')
 @cache.cached(timeout=300)
 def index():
-    capture(request.headers, request.url)
     start = time.time()
     # Move all DB logic into a cached helper function
     playlist_data = get_cached_playlist_data()
@@ -79,7 +82,6 @@ def get_cached_playlist_data():
 
 @bp.route('/today')
 def today():
-    capture(request.headers, request.url)
     """ Simple API endpoint for media posting """
     db = get_db()
     yesterdays_theme = db.execute("SELECT play_date, theme FROM playlist WHERE play_date = DATE('now', '-1 day')").fetchone()
@@ -98,7 +100,6 @@ def today():
 @bp.route('/archive')
 @cache.cached(timeout=1200, key_prefix='playlist_archive')
 def archive():
-    capture(request.headers, request.url)
     """ Listing of previous playlists """
     db = get_db()
     query = "SELECT play_date, theme, song_list FROM playlist WHERE play_date <= current_date ORDER BY play_date DESC"

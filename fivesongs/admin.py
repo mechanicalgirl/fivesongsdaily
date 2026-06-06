@@ -22,6 +22,10 @@ ALBUMART_ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 bp = Blueprint('admin', __name__)
 
+@bp.before_request
+def track():
+    capture(request.headers, request.url)
+
 @bp.route('/admin/clear-cache', methods=['POST'])
 @login_required
 def clear_cache():
@@ -41,7 +45,6 @@ def pagination():
 @login_required
 @cache.cached(timeout=60)
 def admin():
-    capture(request.headers, request.url)
     db = get_db()
     song_query = """
         SELECT id, artist, title, created_at
@@ -446,7 +449,6 @@ def playlistdelete(id):
 @bp.route('/api/playlist/create', methods=["POST"])
 def playlist_create_endpoint():
     """ Process incoming playlist metadata """
-    capture(request.headers, request.url)
     if request.method == 'POST':
         errors = []
         song_list = ''
@@ -511,7 +513,6 @@ def playlist_create_endpoint():
 @bp.route('/api/song/create', methods=["POST"])
 def song_endpoint():
     """ Process incoming song uploads """
-    capture(request.headers, request.url)
     if request.method == 'POST':
         db = get_db()
         if not (request.headers['Flask-Key'] and request.headers['Auth-Name']):
@@ -567,7 +568,6 @@ def song_endpoint():
 @bp.route('/api/songs/delete', methods=["POST"])
 def song_delete_endpoint():
     """ Process incoming song deletions by playlist id """
-    capture(request.headers, request.url)
     if not request.headers['Flask-Key']:
         return Response("Not Authorized"), 401
     if request.method == 'POST':
@@ -612,7 +612,6 @@ def song_delete_endpoint():
 
 @bp.route('/api/get/playlistid', methods=["GET"])
 def get_past_playlist():
-    capture(request.headers, request.url)
     """ Get recent playlist id """
     if request.method == 'GET':
         db = get_db()
