@@ -1,4 +1,5 @@
 import ast
+from datetime import datetime
 import json
 import math
 import os
@@ -649,3 +650,30 @@ def track():
     trend_query = ("SELECT STRFTIME('%Y-%m-%d', request_date) AS date_request, COUNT(*) AS date_count FROM track WHERE blocked != '1' GROUP BY STRFTIME('%Y-%m-%d', request_date);")
     trends = db.execute(trend_query).fetchall()
     return render_template('admin/track.html', tracking=tracking_objs, trends=trends)
+
+@bp.route('/admin/tracking/blocklist')
+@login_required
+def track_blocklist():
+    db = get_db()
+    sel_query = ("SELECT id, value, block_type, added_date FROM blocklist ORDER BY added_date DESC;")
+    blocks = db.execute(sel_query).fetchall()
+    return render_template('admin/blocklist.html', blocks=blocks)
+
+@bp.route('/admin/tracking/blocklist/add', methods=('GET', 'POST'))
+@login_required
+def track_blocklist_add():
+    if request.method == 'POST':
+        db = get_db()
+        form_data = request.form
+        insert_query = ("INSERT INTO blocklist (value, block_type, added_date) VALUES(?, ?, ?);")
+        blocklist_update = db.execute(insert_query, (
+            form_data['block_value'],
+            form_data['block_type'],
+            datetime.now().strftime("%Y-%m-%d")
+        ))
+        db.commit()
+        return redirect("/admin/tracking/blocklist")
+    else:
+        return render_template('admin/blockcreate.html')
+
+

@@ -25,7 +25,9 @@
       });
   </script>
 
-  {% if tracking%}
+  <a class="navbar-brand" href="/admin/tracking/blocklist">Blocklist</a>
+
+  {% if tracking %}
     <table class="table">
       <thead class="thead-dark">
         <tr>
@@ -56,7 +58,7 @@
             {{ t.device.family }}-{{ t.device.brand }}.{{ t.device.model }}
             {{ t.os.family }}-{{ t.os.major }}.{{ t.os.minor }}
           </td>
-          <td style="background: #dae5f4">{{ t.browser.family }}-{{ t.browser.major }}.{{ t.browser.minor }}</td>
+          <td style="background: #dae5f4">{{ t.browser.family }}</td>
           <td>{% if t.blocked=='0' %}&nbsp;{% else %}&#10060{% endif %}</td>
         </tr>
         {% endfor %}

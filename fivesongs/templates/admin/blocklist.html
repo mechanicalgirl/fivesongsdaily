@@ -1,0 +1,30 @@
+{% extends 'adminbase.html' %}
+
+{% block content %}
+
+  <a class="navbar-brand" href="/admin/tracking/blocklist/add">Add to Blocklist</a>
+
+  {% if blocks %}
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">Date</th>
+          <th scope="col">Value</th>
+          <th scope="col">Block Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for b in blocks %}
+        <tr>
+          <td>{{ b.added_date }}</td>
+          <td>{{ b.value }}</td>
+          <td>{{ b.block_type }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    No songs available.<br />
+  {% endif %}
+
+{% endblock %}

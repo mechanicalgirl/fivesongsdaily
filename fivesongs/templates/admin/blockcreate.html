@@ -1,0 +1,24 @@
+{% extends 'adminbase.html' %}
+
+{% block content %}
+
+  <form action="/admin/tracking/blocklist/add" method="post" enctype="multipart/form-data">
+  <table class="table">
+    <tbody>
+      <tr>
+        <th scope="row">Value</th>
+        <td><input class="form-control" type="text" name="block_value" placeholder="Value" value="" /></td>
+      </tr>
+      <tr>
+        <th scope="row">Block Type</th>
+        <td><input class="form-control" type="text" name="block_type" placeholder="('ua_family', 'ua_string', 'path')" value="" /></td>
+      </tr>
+    </tbody>
+  </table>
+  <br />
+  <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+
+  <p><a href="/admin/tracking/blocklist">Back to blocklist</a></p>
+
+{% endblock %}
