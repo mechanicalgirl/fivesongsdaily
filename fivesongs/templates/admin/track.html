@@ -29,27 +29,35 @@
     <table class="table">
       <thead class="thead-dark">
         <tr>
-          <th scope="col">Date</th>
-          <th scope="col">UA</th>
-          <th scope="col">Device</th>
-          <th scope="col">OS</th>
-          <th scope="col">Browser/Agent</th>
-          <th scope="col">Referer</th>
-          <th scope="col">Requested URL</th>
+          <th scope="col" style="background: #dae5f4">Date</th>
+          <th scope="col">
+            Request<br>
+            & Referer
+          </th>
+          <th scope="col" style="background: #dae5f4">UA</th>
+          <th scope="col">
+            Device<br>
+            & OS
+          </th>
+          <th scope="col" style="background: #dae5f4">Browser/Agent</th>
           <th scope="col">Blocked</th>
         </tr>
       </thead>
       <tbody>
         {% for t in tracking %}
         <tr>
-          <td>{{ t.request_date }}</td>
+          <td style="background: #dae5f4" nowrap>{{ t.request_date }}</td>
+          <td>
+            {{ t.url }}<br>
+            {{ t.referer }}
+          </td>
           <td style="background: #dae5f4">{{ t.ua }}</td>
-          <td>{{ t.device.family }} {{ t.device.brand }} {{ t.device.model }}</td>
-          <td style="background: #dae5f4">{{ t.os.family }} {{ t.os.major }}.{{ t.os.minor }}</td>
-          <td>{{ t.browser.family }} {{ t.browser.major }}.{{ t.browser.minor }}</td>
-          <td style="background: #dae5f4">{{ t.referer }}</td>
-          <td>{{ t.url }}</td>
-          <td style="background: #dae5f4">{% if t.blocked=='0' %}&nbsp;{% else %}&#10060{% endif %}</td>
+          <td>
+            {{ t.device.family }}-{{ t.device.brand }}.{{ t.device.model }}
+            {{ t.os.family }}-{{ t.os.major }}.{{ t.os.minor }}
+          </td>
+          <td style="background: #dae5f4">{{ t.browser.family }}-{{ t.browser.major }}.{{ t.browser.minor }}</td>
+          <td>{% if t.blocked=='0' %}&nbsp;{% else %}&#10060{% endif %}</td>
         </tr>
         {% endfor %}
       </tbody>
