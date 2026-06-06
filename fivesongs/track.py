@@ -1,20 +1,35 @@
 from datetime import datetime
+import sys
 
 from flask import abort
 from ua_parser import user_agent_parser
 
 from fivesongs.db import get_db
-from fivesongs.disallowed import disallowed_list
 
 def capture(request_headers, request_url):
-    user_agent = request_headers.get('User-Agent')
+    user_agent = request_headers.get('User-Agent', '')
     ua_dict = user_agent_parser.Parse(user_agent)
     ua_dict['referer'] = request_headers.get('Referer')
     ua_dict['request_url'] = request_url
-    if ua_dict['user_agent']['family'] in disallowed_list:
-        simple_tracking(ua_dict, blocked=True)
+
+    # TODO: add caching here so that you're not hitting the db on every request
+    db = get_db()
+    disallowed_request = db.execute("SELECT value, block_type FROM blocklist", ()).fetchall()
+    # Blocked agents
+    disallowed_agents = [d['value'] for d in disallowed_request if d['block_type'] == 'ua_family']
+    # In some cases, I've seen User-Agent strings that contain substrings like `wp-admin`
+    disallowed_strs = [d['value'] for d in disallowed_request if d['block_type'] == 'ua_string']
+    # Sometimes I want to block on substrings that show up in invalid, probing request urls
+    disallowed_paths = [d['value'] for d in disallowed_request if d['block_type'] == 'path']
+
+    blocked = (
+        ua_dict['user_agent']['family'] in disallowed_agents or
+        any(b in ua_dict['string'] for b in disallowed_strs) or
+        any(b in ua_dict['request_url'] for b in disallowed_paths)
+    )
+    simple_tracking(ua_dict, blocked=blocked)
+    if blocked:
         abort(401)
-    simple_tracking(ua_dict, blocked=False)
 
 def simple_tracking(ua_dict, blocked):
     insert_query = ("INSERT INTO track (ua, device, os, browser, referer, url, blocked, request_date) "
