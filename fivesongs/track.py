@@ -11,7 +11,13 @@ def capture(request_headers, request_url):
     user_agent = request_headers.get('User-Agent', '')
     ua_dict = user_agent_parser.Parse(user_agent)
     ua_dict['referer'] = request_headers.get('Referer')
-    ua_dict['remote_addr'] = request_headers.environ.get('REMOTE_ADDR')
+
+    if request_headers.getlist("X-Forwarded-For"):
+       ip = request_headers.getlist("X-Forwarded-For")[0]
+    else:
+       ip = request_headers.environ.get('REMOTE_ADDR')
+    ua_dict['remote_addr'] = ip
+
     ua_dict['request_url'] = request_url
 
     d_agents, d_strs, d_paths, d_ips = get_disallowed()
