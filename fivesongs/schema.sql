@@ -45,6 +45,7 @@ CREATE TABLE track (
     browser TEXT,
     referer TEXT,
     url TEXT,
+    remote_addr TEXT,
     blocked TEXT,
     request_date TEXT
 );

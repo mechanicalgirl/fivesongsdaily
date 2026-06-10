@@ -630,7 +630,7 @@ def get_past_playlist():
 def track():
     db = get_db()
 
-    sel_query = ("SELECT ua, device, os, browser, referer, url, blocked, request_date FROM track ORDER BY request_date DESC LIMIT 200;")
+    sel_query = ("SELECT ua, device, os, browser, referer, url, remote_addr, blocked, request_date FROM track ORDER BY request_date DESC LIMIT 200;")
     tracking = db.execute(sel_query).fetchall()
     tracking_objs = []
     for t in tracking:
@@ -641,6 +641,7 @@ def track():
             'browser': eval(t['browser']),
             'referer': t['referer'],
             'url': t['url'],
+            'remote_addr': t['remote_addr'],
             'blocked': t['blocked'],
             'request_date': t['request_date']
         }
@@ -675,5 +676,4 @@ def track_blocklist_add():
         return redirect("/admin/tracking/blocklist")
     else:
         return render_template('admin/blockcreate.html')
-
 

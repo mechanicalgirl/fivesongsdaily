@@ -11,14 +11,16 @@ def capture(request_headers, request_url):
     user_agent = request_headers.get('User-Agent', '')
     ua_dict = user_agent_parser.Parse(user_agent)
     ua_dict['referer'] = request_headers.get('Referer')
+    ua_dict['remote_addr'] = request_headers.environ.get('REMOTE_ADDR')
     ua_dict['request_url'] = request_url
 
-    disallowed_agents, disallowed_strs, disallowed_paths = get_disallowed()
+    d_agents, d_strs, d_paths, d_ips = get_disallowed()
 
     blocked = (
-        ua_dict['user_agent']['family'] in disallowed_agents or
-        any(b in ua_dict['string'] for b in disallowed_strs) or
-        any(b in ua_dict['request_url'] for b in disallowed_paths)
+        ua_dict['user_agent']['family'] in d_agents or
+        any(b in ua_dict['string'] for b in d_strs) or
+        any(b in ua_dict['request_url'] for b in d_paths) or
+        ua_dict['remote_addr'] in d_ips
     )
     simple_tracking(ua_dict, blocked=blocked)
     if blocked:
@@ -35,11 +37,13 @@ def get_disallowed():
     disallowed_strs = [d['value'] for d in disallowed_request if d['block_type'] == 'ua_string']
     # Sometimes I want to block on substrings that show up in invalid, probing request urls
     disallowed_paths = [d['value'] for d in disallowed_request if d['block_type'] == 'path']
-    return disallowed_agents, disallowed_strs, disallowed_paths
+    # This allows us to block malicious traffi from specific IPs:
+    disallowed_ips = [d['value'] for d in disallowed_request if d['block_type'] == 'ip']
+    return disallowed_agents, disallowed_strs, disallowed_paths, disallowed_ips
 
 def simple_tracking(ua_dict, blocked):
-    insert_query = ("INSERT INTO track (ua, device, os, browser, referer, url, blocked, request_date) "
-                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?) "
+    insert_query = ("INSERT INTO track (ua, device, os, browser, referer, url, remote_addr, blocked, request_date) "
+                    "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?) "
                     "RETURNING id;")
     try:
         db = get_db()
@@ -50,6 +54,7 @@ def simple_tracking(ua_dict, blocked):
             str(ua_dict['user_agent']),
             str(ua_dict['referer']),
             str(ua_dict['request_url']),
+            str(ua_dict['remote_addr']),
             blocked,
             datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         )).fetchone()

@@ -26,35 +26,31 @@
   </script>
 
   <a class="navbar-brand" href="/admin/tracking/blocklist">Blocklist</a>
+  <br clear="all">
 
   {% if tracking %}
-    <table class="table">
-      <thead class="thead-dark">
-        <tr>
-          <th scope="col" style="background: #dae5f4">Date</th>
-          <th scope="col">
-            Request<br>
-            & Referer
-          </th>
-          <th scope="col" style="background: #dae5f4">UA</th>
-          <th scope="col">Browser/Agent</th>
-          <th scope="col" style="background: #dae5f4">Blocked</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for t in tracking %}
-        <tr>
-          <td style="background: #dae5f4" nowrap>{{ t.request_date }}</td>
-          <td>
-            {{ t.url }}<br>
-            {{ t.referer }}
-          </td>
-          <td style="background: #dae5f4">{{ t.ua }}</td>
-          <td>{{ t.browser.family }}</td>
-          <td style="background: #dae5f4">{% if t.blocked=='0' %}&nbsp;{% else %}&#10060{% endif %}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
+    <table>
+      <tr style="font-weight: bold; font-size: 12px; padding: 5px;">
+        <td style="padding: 5px;">Date</td>
+        <td style="padding: 5px;">Referer & Request</td>
+        <td style="padding: 5px;">IP</td>
+        <td style="padding: 5px;">UA</td>
+        <td style="padding: 5px;">Browser/Agent</td>
+        <td style="padding: 5px;">Blocked</td>
+      </tr>
+      {% for t in tracking %}
+      <tr style="font-size: 12px;">
+        <td style="padding: 5px;" nowrap>{{ t.request_date }}</td>
+        <td style="padding: 5px;">
+          Referer: {{ t.referer }}<br>
+          Request: {{ t.url }}
+        </td>
+        <td style="padding: 5px;">{{ t.remote_addr }}</td>
+        <td style="padding: 5px; width: 35%">{{ t.ua }}</td>
+        <td style="padding: 5px;">{{ t.browser.family }}</td>
+        <td style="padding: 5px;">{% if t.blocked=='0' %}&nbsp;{% else %}&#10060{% endif %}</td>
+      </tr>
+      {% endfor %}
     </table>
   {% else %}
     No tracking records available.<br />
