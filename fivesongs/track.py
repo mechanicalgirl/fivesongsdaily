@@ -18,6 +18,9 @@ def capture(request_headers, request_url):
        ip = request_headers.environ.get('REMOTE_ADDR')
     ua_dict['remote_addr'] = ip
 
+    if ip == '174.81.5.39':
+        return True
+
     ua_dict['request_url'] = request_url
 
     d_agents, d_strs, d_paths, d_ips = get_disallowed()
@@ -44,7 +47,7 @@ def get_disallowed():
     # Sometimes I want to block on substrings that show up in invalid, probing request urls
     disallowed_paths = [d['value'] for d in disallowed_request if d['block_type'] == 'path']
     # This allows us to block malicious traffic from specific IPs:
-    disallowed_ips = [d['value'] for d in disallowed_request if d['block_type'] == 'ip' and d['value'] != '174.81.5.39']
+    disallowed_ips = [d['value'] for d in disallowed_request if d['block_type'] == 'ip']
     return disallowed_agents, disallowed_strs, disallowed_paths, disallowed_ips
 
 def simple_tracking(ua_dict, blocked):
