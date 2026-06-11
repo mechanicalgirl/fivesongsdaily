@@ -43,8 +43,8 @@ def get_disallowed():
     disallowed_strs = [d['value'] for d in disallowed_request if d['block_type'] == 'ua_string']
     # Sometimes I want to block on substrings that show up in invalid, probing request urls
     disallowed_paths = [d['value'] for d in disallowed_request if d['block_type'] == 'path']
-    # This allows us to block malicious traffi from specific IPs:
-    disallowed_ips = [d['value'] for d in disallowed_request if d['block_type'] == 'ip']
+    # This allows us to block malicious traffic from specific IPs:
+    disallowed_ips = [d['value'] for d in disallowed_request if d['block_type'] == 'ip' and d['value'] != '174.81.5.39']
     return disallowed_agents, disallowed_strs, disallowed_paths, disallowed_ips
 
 def simple_tracking(ua_dict, blocked):
