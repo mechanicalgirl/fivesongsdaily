@@ -627,7 +627,7 @@ def get_past_playlist():
 
 @bp.route('/admin/tracking')
 @login_required
-def track():
+def tracking():
     db = get_db()
 
     sel_query = ("SELECT ua, device, os, browser, referer, url, remote_addr, blocked, request_date FROM track ORDER BY request_date DESC LIMIT 200;")
