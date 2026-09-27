@@ -8,7 +8,11 @@ token = sys.argv[2]
 music_site_url = sys.argv[3]
 
 url = f'{music_site_url}/today'
-api = requests.get(url)
+try:
+    api = requests.get(url)
+    print(api)
+except Exception as e:
+    print("ERROR", e)
 json_response = api.json()
 
 with open('.github/scripts/post_id.txt', 'r') as file:

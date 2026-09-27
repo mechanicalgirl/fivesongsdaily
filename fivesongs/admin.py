@@ -647,7 +647,10 @@ def tracking():
         }
         tracking_objs.append(tobj)
 
-    trend_query = ("SELECT STRFTIME('%Y-%m-%d', request_date) AS date_request, COUNT(*) AS date_count FROM track WHERE blocked != '1' GROUP BY STRFTIME('%Y-%m-%d', request_date);")
+    trend_query = ("SELECT STRFTIME('%Y-%m-%d', request_date) AS date_request, COUNT(*) AS date_count \
+                    FROM track WHERE blocked != '1' \
+                    GROUP BY STRFTIME('%Y-%m-%d', request_date) \
+                    ORDER BY STRFTIME('%Y-%m-%d', request_date) DESC LIMIT 45;")
     trends = db.execute(trend_query).fetchall()
     return render_template('admin/track.html', tracking=tracking_objs, trends=trends)
 
